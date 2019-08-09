@@ -1,5 +1,4 @@
 import regex
-import pyperclip
 
 ### REGEX PATTERNS ###
 dscan_splitter = regex.compile(r'\d+\t[^\t]+\t[^\t]+\t(?:[\d,]+ (?:km|m)|-)', flags = regex.MULTILINE | regex.VERSION1) # find every line that is a valid D-Scan line
@@ -38,4 +37,4 @@ def parse_dscan(dscan):
         }
 
         dscan_data.append(dscan_entry)
-    return(dscan_data) 
+    return(dscan_data)
