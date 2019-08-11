@@ -1,5 +1,6 @@
 import psycopg2
 from configparser import ConfigParser
+import json
 
 def __config(filename='database.ini', section='postgresql'):
     # create a parser
@@ -28,29 +29,39 @@ def __connect():
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
-      
-        # create a cursor
-        cur = conn.cursor()
-        # return cursor for use
-        return conn, cur
+        # return connection
+        return conn
     except(Exception, psycopg2.DataError) as error:
         print(error)
         exit()
 
 def get_scan(scan_id):
+    cur = conn.cursor()
     cmd = 'SELECT * FROM dscan_data WHERE scan_id = %s'
     cur.execute(cmd, (scan_id, ))
     dat = cur.fetchone()
-    return(dat)
+    cur.close()
+    if dat == None:
+        return None
+    else:
+        data = {
+        "scan_UUID" : dat[0],
+        "scan_data" : dat[1],
+        "datetime_created" : dat[2].strftime("%Y-%m-%d %H:%M:%S")
+        }
+        data = json.dumps(data)
+        return data
 
 def add_scan(scan_id, scan_data, creation_time):
+    json_data = json.dumps(scan_data) # dump scan data to json
+    cur = conn.cursor()
     cmd = 'INSERT INTO dscan_data VALUES (%s, %s, %s)'
-    cur.execute(cmd, (scan_id, scan_data, creation_time))
+    cur.execute(cmd, (str(scan_id), json_data, creation_time))
     conn.commit()
+    cur.close()
 
 
-# define connection and cursor globablly
+# define connection globally
 global conn
-global cur
-# unpack tuple and assign connection and cursor
-(conn, cur) = __connect()
+# assigned connection
+conn = __connect()
