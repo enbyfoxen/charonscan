@@ -36,27 +36,33 @@ def __connect():
         exit()
 
 def get_scan(scan_id):
-    cur = conn.cursor()
-    cmd = 'SELECT * FROM dscan_data WHERE scan_id = %s'
+    cur = conn.cursor() #define cursor
+    cmd = 'SELECT * FROM dscan_data WHERE scan_id = %s' # SQL query, get all columns from scan_data where scan_id matches
     cur.execute(cmd, (scan_id, ))
     dat = cur.fetchone()
     cur.close()
-    if dat == None:
+    if dat == None: # check if response is empty (doesnt exist)
         return None
     else:
-        data = {
+        # put data into json format before returning it.
+        data = { 
         "scan_UUID" : dat[0],
         "scan_data" : dat[1],
-        "datetime_created" : dat[2].strftime("%Y-%m-%d %H:%M:%S")
+        "datetime_created" : dat[2].strftime("%Y-%m-%d %H:%M:%S"),
+        "typelist" : dat[3],
+        "grouplist" : dat[4]
         }
         data = json.dumps(data)
         return data
 
-def add_scan(scan_id, scan_data, creation_time):
+def add_scan(scan_id, scan_data, creation_time, typelist, grouplist):
     json_data = json.dumps(scan_data) # dump scan data to json
+    json_typelist = json.dumps(typelist)
+    json_grouplist = json.dumps(grouplist)
     cur = conn.cursor()
-    cmd = 'INSERT INTO dscan_data VALUES (%s, %s, %s)'
-    cur.execute(cmd, (str(scan_id), json_data, creation_time))
+    # write data to database
+    cmd = 'INSERT INTO dscan_data VALUES (%s, %s, %s, %s, %s)'
+    cur.execute(cmd, (str(scan_id), json_data, creation_time, json_typelist, json_grouplist))
     conn.commit()
     cur.close()
 

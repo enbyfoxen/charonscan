@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<div class = "row">
+    <div class="column" id = "col1">
+        <div id = "type_list"></div>
+    </div>
+    
+    <div class="column" id = "col2">
+        <div id = "group_list"></div>
+    </div>
+</div>
+<script>
+    var scandata
+    var url = document.URL
+    var urlsplit = url.split("/").slice(-1)[0];
+    $(document).ready(function(){
+        $.getJSON("http://127.0.0.1:5000/api/scan/" + urlsplit, function(response) {
+        document.getElementById('type_list').appendChild(makeUL(response['typelist']))
+        document.getElementById('group_list').appendChild(makeUL(response['grouplist']))
+        });
+    });
+
+  /* Deprecated by including type list in database
+  function type_list(array){
+    var list = document.createElement('ul');
+    var typelist = {}
+
+    for (entry of array) {
+        if (entry.item_name in typelist){
+            typelist[entry.item_name] += 1
+        }
+
+        else {
+        typelist[entry.item_name] = 1
+        }
+    }
+    return typelist;
+    }
+    */
+
+    function makeUL(dict) {
+        var list = document.createElement('ul')
+
+        for (const [key, value] of Object.entries(dict)){
+            var item = document.createElement('li')
+            item.appendChild(document.createTextNode(key + " : " + value))
+            list.appendChild(item)
+        }
+        return list
+    }
+</script>
+
+</body>
+</html> 

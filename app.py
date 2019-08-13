@@ -7,43 +7,100 @@ import dscan_parser
 import uuid
 import datetime
 from flask import jsonify
+import json
 
 app = Flask(__name__)
 
+### Here we load static files like lookup tables. ###
+### They should not be modified, they are intended for global use by multiple functions ###
+with open('group_lookup.json') as f:
+    group_lookup = json.load(f)
+    f.close()
+
+# used to get scan data from API by UUID
 @app.route('/api/scan/<path:path>')
-def get_dscan(path):
-    if validate_uuid4(path) == False:
+def get_dscan(path): 
+    if validate_uuid4(path) == False: # check if the string after scan/ is a valid UUID. If it isnt, abort
         return abort(400)
     else:
-        res = database.get_scan(path)
+        res = database.get_scan(path) # make database call, if it comes back empty abort with 404.
         if res == None:
             return abort(404)
         else:
-            response = app.response_class(
+            response = app.response_class( # else, return json data from database call.
                 response=res,
                 mimetype='application/json'
             )
             return response
-        
+
+# used to add scans to database
+
+### I REALLY NEED TO MAKE THIS CLEANER, BASICALLY HAVING THE SAME CODE FOR BOTH OPTIONS IS KINDA SHIT ###
 @app.route('/api/post', methods = ['POST'])
 def api_post():
-    if request.headers['Content-Type'] == 'application/json':
-        data = request.get_json()
-        if data == None:
+    if request.headers['Content-Type'] == 'application/json': # check if the mimetype is json
+        data = request.get_json() # retrieve json data
+        if data == None: # abort if the client sent empty data
             abort(400)
+
+        elif 'string' not in data:  # abort if the client sent data in the wrong format
+            abort(400)
+
         else:
-            scan = dscan_parser.parse_dscan(str(request.json['string']))
-        if scan.__len__() < 1:
+            scan = dscan_parser.parse_dscan(str(request.json['string'])) # parse scan data
+        if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
             abort(400)
-        scan_id = uuid.uuid4()
-        creation_time = datetime.datetime.now()
-        database.add_scan(scan_id, scan, creation_time)
-        data = {"scan_id" : scan_id}
-        return jsonify(data)
-    else:
+
+        scan_id = store_scan(scan) # call function that stores the scan and returns the scan ID, send scan ID to client
+        return scan_id
+    
+    elif request.headers['Content-Type'] == 'text/plain; charset=utf-8': # check if the mimetype is text/plain and the charset utf-8
+        data = request.get_data(as_text=True) # get the plaintext data as text
+        scan = dscan_parser.parse_dscan(data) # parse the scan data
+        if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
+            abort(400)
+
+        scan_id = store_scan(scan)  # call function that stores the scan and returns the scan ID, send scan ID to client
+        return scan_id
+    
+    else: # if client sent neither json nor plain/text, abort with 415 (Unsupported Media Type)
         abort(415)
 
+@app.route('/scan/<path:path>')
+def serve_scan(path):
+    return app.send_static_file('page.html')
+
+def get_typelist(scan): # create a dictionary of each item name and how often it occurs
+    typelist = {}
+    for entry in scan:
+        if entry['item_name'] in typelist:
+            typelist[entry['item_name']] += 1
+
+        else:
+            typelist[entry['item_name']] = 1
+    
+    return typelist
+
+def store_scan(parsed_scan):
+    scan_id = uuid.uuid4() # generate a random UUID to use as scan ID
+    creation_time = datetime.datetime.now() # store current time as creation time
+    typelist = get_typelist(parsed_scan) # call typelist function 
+    grouplist = get_grouplist(typelist)
+    database.add_scan(scan_id, parsed_scan, creation_time, typelist, grouplist) # make database call to create entry, pass scan ID, scan data and creation time
+    datareturn = {"scan_id" : scan_id} # wrap in json and return scan ID
+    return jsonify(datareturn)
+
+def get_grouplist(typelist): # gets list of shiptypes and their numbers, uses lookup table to convert it to a list of shipgroups and their numbers
+    global group_lookup
+    grouplist = {}
+    for key, value in typelist.items():
+        if group_lookup[key] in grouplist:
+            grouplist[group_lookup[key]] += value
+        
+        else:
+            grouplist[group_lookup[key]] = value
+    return grouplist
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)     

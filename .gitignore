@@ -131,3 +131,5 @@ dmypy.json
 
 # User added
 database.ini
+testdata.json
+scan.json
