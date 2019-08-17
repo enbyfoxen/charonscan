@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<textarea id = "scaninput" rows = "10" cols ="100"></textarea>
+<button type="button" id="button1" onclick="postscan()">Post Scan</button>
+<p id = "errorbox"></p>
+
+
+<script>
+    function postscan(){
+        var errflag = false
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "http://127.0.0.1:5000/api/post", false)
+        xhttp.setRequestHeader("Content-type", "text/plain")
+        
+        xhttp.send(document.getElementById("scaninput").value)
+        if (xhttp.status == 200){
+            window.location.href = "http://127.0.0.1:5000/scan/" + xhttp.responseText
+        }
+        else if (xhttp.status == 400){
+            document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"
+        }
+        else {
+            document.getElementById("errorbox").innerHTML = "An error occured, please try again"
+        }
+    }
+</script>
+
+</body>
+</html> 

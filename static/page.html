@@ -2,25 +2,103 @@
 <html>
 <body>
 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<div class = "row">
-    <div class="column" id = "col1">
-        <div id = "type_list"></div>
-    </div>
-    
-    <div class="column" id = "col2">
-        <div id = "group_list"></div>
+
+
+
+<div class="container-fluid">
+    <div class = "row pt-4">
+        <div class="pl-5 pr-4 col-md-4" id = "col1">
+            <div id = "type_list"></div>
+        </div>
+        
+        <div class="pr-4 pl-4 col-md-4" id = "col2">
+            <div id = "group_list"></div>
+        </div>
+
+        <div class="pr-5 pl-4 col-md-4" id = "col3">
+            <div id = "cat_list"></div>
+        </div>
     </div>
 </div>
 <script>
     var scandata
-    var url = document.URL
-    var urlsplit = url.split("/").slice(-1)[0];
-    $(document).ready(function(){
-        $.getJSON("http://127.0.0.1:5000/api/scan/" + urlsplit, function(response) {
-        document.getElementById('type_list').appendChild(makeUL(response['typelist']))
-        document.getElementById('group_list').appendChild(makeUL(response['grouplist']))
-        });
+    var url = document.URL //get document URL
+    var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
+    $(document).ready(function(){ //wait for page to load
+        $.getJSON("http://127.0.0.1:5000/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
+            var typearray = []
+            var typecount = 0
+            for (const [key, value] of Object.entries(response['typelist'])){ //convert dict to array of objects
+                //passing the key name directly to an object doesnt work, this is a workaround for this
+                var obj = {}
+                obj[key] = value
+                typecount += value
+                typearray.push(obj)
+            }
+            var grouparray = []
+            var groupcount = 0
+            for (const [key, value] of Object.entries(response['grouplist'])){ //convert dict to array of objects
+                var obj = {}
+                obj[key] = value
+                groupcount += value
+                grouparray.push(obj)
+            }
+            var catarray = []
+            var catcount = 0
+            for (const [key, value] of Object.entries(response['catlist'])){ //convert dict to array of objects
+                var obj = {}
+                obj[key] = value
+                catcount += value
+                catarray.push(obj)
+            }
+
+            for (entry of typearray){ //assign danger values for types
+                if (entry[Object.keys(entry)[0]] / typecount >= 0.1){
+                    entry["danger"] = "red"
+                } 
+                else if (entry[Object.keys(entry)[0]] / typecount >= 0.05){
+                    entry["danger"] = "yellow"
+                }
+                else {
+                    entry["danger"] = "white"
+                }
+            }
+
+            for (entry of grouparray){ //assign danger values for groups
+                if (entry[Object.keys(entry)[0]] / groupcount >= 0.2){
+                    entry["danger"] = "red"
+                } 
+                else if (entry[Object.keys(entry)[0]] / groupcount >= 0.1){
+                    entry["danger"] = "yellow"
+                }
+                else {
+                    entry["danger"] = "white"
+                }
+            }
+
+            for (entry of catarray){ //assign danger to be white for all categories
+                entry["danger"] = "white"
+            }
+            //sort lists alphabetically
+            typearray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
+            grouparray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
+            catarray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
+            //sort lists by entry amount
+            typearray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
+            grouparray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
+            catarray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
+
+            document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorder list
+            document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorder list
+            document.getElementById('cat_list').appendChild(makeUL(catarray)) //call function to make unorder list
+
+            });
     });
 
   /* Deprecated by including type list in database
@@ -41,14 +119,37 @@
     }
     */
 
-    function makeUL(dict) {
+    function makeUL(array) {
         var list = document.createElement('ul')
-
-        for (const [key, value] of Object.entries(dict)){
-            var item = document.createElement('li')
-            item.appendChild(document.createTextNode(key + " : " + value))
-            list.appendChild(item)
-        }
+        list.className = 'list-group'
+        var max_ships = 0
+        array.forEach(function(dict){
+            for (const [key, value] of Object.entries(dict)){
+                max_ships += value
+            }
+        })
+        array.forEach(function(dict){
+            var key = Object.keys(dict)[0]
+            var value = dict[Object.keys(dict)[0]]
+            var danger = dict[Object.keys(dict)[1]]
+            //var danger = dict[object.keys(dict)[1]]
+            var item = document.createElement('li') // create list element
+            if (danger == "red"){ //if the danger tag is red, assign class for 'list-group-item-danger' in addition to others
+                item.className = 'list-group-item list-group-item-danger d-flex justify-content-between align-items-center' //add classnames to list element (for css) and mark as danger (red)
+            }
+            else if (danger == "yellow"){ //if the danger tag is yellow, assign class for 'list-group-item-warning' in addition to others
+                item.className = 'list-group-item list-group-item-warning d-flex justify-content-between align-items-center' //add classnames to list element (for css) and mark as warning (orange)
+            }
+            else if (danger =="white"){
+                item.className = 'list-group-item d-flex justify-content-between align-items-center' //add classnames to list element (for css)
+            }
+            var badgeitem = document.createElement('span') //create badge element
+            badgeitem.className = 'badge badge-primary badge-pill float-right' // add classnames (for css)
+            badgeitem.appendChild(document.createTextNode(value)) //add text node to badge element
+            item.appendChild(document.createTextNode(key)) //add text note to list element
+            item.appendChild(badgeitem) //add the bage element to the list element
+            list.appendChild(item) //add the list element to the list
+        })
         return list
     }
 </script>

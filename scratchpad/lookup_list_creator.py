@@ -1,10 +1,10 @@
 import json
 
-with open('../groupIDlookup.json', encoding="utf-8") as f:
+with open('../groupName_catID.json', encoding="utf-8") as f:
     groupID_lookup = json.load(f)
     f.close()
 
-with open('../groupnamelookup.json') as f:
+with open('../catID_catName.json') as f:
     groupName_lookup = json.load(f)
     f.close()
 

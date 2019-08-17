@@ -16,7 +16,9 @@ app = Flask(__name__)
 with open('group_lookup.json') as f:
     group_lookup = json.load(f)
     f.close()
-
+with open('category_lookup.json') as f:
+    cat_lookup = json.load(f)
+    f.close()
 # used to get scan data from API by UUID
 @app.route('/api/scan/<path:path>')
 def get_dscan(path): 
@@ -54,7 +56,7 @@ def api_post():
         scan_id = store_scan(scan) # call function that stores the scan and returns the scan ID, send scan ID to client
         return scan_id
     
-    elif request.headers['Content-Type'] == 'text/plain; charset=utf-8': # check if the mimetype is text/plain and the charset utf-8
+    elif request.headers['Content-Type'] == 'text/plain': # check if the mimetype is text/plain and the charset utf-8
         data = request.get_data(as_text=True) # get the plaintext data as text
         scan = dscan_parser.parse_dscan(data) # parse the scan data
         if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
@@ -64,11 +66,26 @@ def api_post():
         return scan_id
     
     else: # if client sent neither json nor plain/text, abort with 415 (Unsupported Media Type)
+        print(request.headers['Content-Type'])
         abort(415)
 
 @app.route('/scan/<path:path>')
 def serve_scan(path):
     return app.send_static_file('page.html')
+
+@app.route('/post')
+def postpage():
+    return app.send_static_file('postscan.html')
+
+def store_scan(parsed_scan):
+    scan_id = uuid.uuid4() # generate a random UUID to use as scan ID
+    creation_time = datetime.datetime.now() # store current time as creation time
+    typelist = get_typelist(parsed_scan) # call typelist function 
+    grouplist = get_grouplist(typelist)
+    catlist = get_catlist(grouplist)
+    database.add_scan(scan_id, parsed_scan, creation_time, typelist, grouplist, catlist) # make database call to create entry, pass scan ID, scan data and creation time
+    datareturn = str(scan_id)
+    return datareturn
 
 def get_typelist(scan): # create a dictionary of each item name and how often it occurs
     typelist = {}
@@ -81,15 +98,6 @@ def get_typelist(scan): # create a dictionary of each item name and how often it
     
     return typelist
 
-def store_scan(parsed_scan):
-    scan_id = uuid.uuid4() # generate a random UUID to use as scan ID
-    creation_time = datetime.datetime.now() # store current time as creation time
-    typelist = get_typelist(parsed_scan) # call typelist function 
-    grouplist = get_grouplist(typelist)
-    database.add_scan(scan_id, parsed_scan, creation_time, typelist, grouplist) # make database call to create entry, pass scan ID, scan data and creation time
-    datareturn = {"scan_id" : scan_id} # wrap in json and return scan ID
-    return jsonify(datareturn)
-
 def get_grouplist(typelist): # gets list of shiptypes and their numbers, uses lookup table to convert it to a list of shipgroups and their numbers
     global group_lookup
     grouplist = {}
@@ -100,6 +108,18 @@ def get_grouplist(typelist): # gets list of shiptypes and their numbers, uses lo
         else:
             grouplist[group_lookup[key]] = value
     return grouplist
+
+def  get_catlist(grouplist):
+    global cat_lookup
+    catlist = {}
+    for key, value in grouplist.items():
+        if cat_lookup[key] in catlist:
+            catlist[cat_lookup[key]] += value
+
+        else:
+            catlist[cat_lookup[key]] = value
+    return catlist
+
 
 
 if __name__ == "__main__":

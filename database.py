@@ -50,19 +50,21 @@ def get_scan(scan_id):
         "scan_data" : dat[1],
         "datetime_created" : dat[2].strftime("%Y-%m-%d %H:%M:%S"),
         "typelist" : dat[3],
-        "grouplist" : dat[4]
+        "grouplist" : dat[4],
+        "catlist" : dat[5]
         }
         data = json.dumps(data)
         return data
 
-def add_scan(scan_id, scan_data, creation_time, typelist, grouplist):
+def add_scan(scan_id, scan_data, creation_time, typelist, grouplist, catlist):
     json_data = json.dumps(scan_data) # dump scan data to json
     json_typelist = json.dumps(typelist)
     json_grouplist = json.dumps(grouplist)
+    json_catlist = json.dumps(catlist)
     cur = conn.cursor()
     # write data to database
-    cmd = 'INSERT INTO dscan_data VALUES (%s, %s, %s, %s, %s)'
-    cur.execute(cmd, (str(scan_id), json_data, creation_time, json_typelist, json_grouplist))
+    cmd = 'INSERT INTO dscan_data VALUES (%s, %s, %s, %s, %s, %s)'
+    cur.execute(cmd, (str(scan_id), json_data, creation_time, json_typelist, json_grouplist, json_catlist))
     conn.commit()
     cur.close()
 
