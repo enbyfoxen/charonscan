@@ -9,7 +9,15 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-
+<style>
+    .border {
+    border-width:4px !important;
+    border-style: outset !important;
+    }
+    .border-pink{
+        border-color: rgb(255,0,204) !important;
+    }
+</style>
 
 <div class="container-fluid">
     <div class = "row pt-4">
@@ -31,6 +39,26 @@
     var url = document.URL //get document URL
     var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
     $(document).ready(function(){ //wait for page to load
+        $.getJSON("http://127.0.0.1:5000/data/ships.json", function(response){
+            dpsShips = response['dpsShips']
+            logiShips = response['logiShips']
+            supportShips = response['supportShips']
+            cynoShips = response['cynoShips']
+            capShips = response['caps']
+            superShips = response['supers']
+            faxShips = response['faxes']
+            titanShips = response['titans']
+        })
+        $.getJSON("http://127.0.0.1:5000/data/groups.json", function(response){
+            dps = response['dps']
+            support = response['support']
+            cyno = response['cyno']
+            logi = response['logi']
+            caps = response['caps']
+            supers = response['supers']
+            faxes = response['faxes']
+            titans = response['titans']
+        })
         $.getJSON("http://127.0.0.1:5000/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
             var typearray = []
             var typecount = 0
@@ -39,6 +67,34 @@
                 var obj = {}
                 obj[key] = value
                 typecount += value
+                // assign class for later highlighting, the letter at the start is for sorting purposes.
+                if (dpsShips.includes(key) == true){
+                    obj["class"] = "A_dps"
+                }
+                else if (logiShips.includes(key) == true){
+                    obj["class"] = "B_logi"
+                }
+                else if (supportShips.includes(key) == true){
+                    obj["class"] = "C_support"
+                }
+                else if (cynoShips.includes(key) == true){
+                    obj["class"] = "D_cyno"
+                }
+                else if (titanShips.includes(key) == true){
+                    obj["class"] = "E_titan"
+                }
+                else if (superShips.includes(key) == true){
+                    obj["class"] = "F_super"
+                }
+                else if (faxShips.includes(key) == true){
+                    obj["class"] = "G_fax"
+                }
+                else if (capShips.includes(key) == true){
+                    obj["class"] = "H_cap"
+                }
+                else{
+                    obj["class"] = "I_none"
+                }
                 typearray.push(obj)
             }
             var grouparray = []
@@ -47,7 +103,36 @@
                 var obj = {}
                 obj[key] = value
                 groupcount += value
+                // assign class for later highlighting, the letter at the start is for sorting purposes.
+                if (dps.includes(key) == true){
+                    obj["class"] = "A_dps"
+                }
+                else if (logi.includes(key) == true){
+                    obj["class"] = "B_logi"
+                }
+                else if (support.includes(key) == true){
+                    obj["class"] = "C_support"
+                }
+                else if (cyno.includes(key) == true){
+                    obj["class"] = "D_cyno"
+                }
+                else if (titans.includes(key) == true){
+                    obj["class"] = "E_titan"
+                }
+                else if (supers.includes(key) == true){
+                    obj["class"] = "F_super"
+                }
+                else if (faxes.includes(key) == true){
+                    obj["class"] = "G_fax"
+                }
+                else if (caps.includes(key) == true){
+                    obj["class"] = "H_cap"
+                }
+                else{
+                    obj["class"] = "I_none"
+                }
                 grouparray.push(obj)
+                
             }
             var catarray = []
             var catcount = 0
@@ -55,37 +140,12 @@
                 var obj = {}
                 obj[key] = value
                 catcount += value
+                obj["class"] = "E_none" //no highlighting for categories
                 catarray.push(obj)
             }
+ 
 
-            for (entry of typearray){ //assign danger values for types
-                if (entry[Object.keys(entry)[0]] / typecount >= 0.1){
-                    entry["danger"] = "red"
-                } 
-                else if (entry[Object.keys(entry)[0]] / typecount >= 0.05){
-                    entry["danger"] = "yellow"
-                }
-                else {
-                    entry["danger"] = "white"
-                }
-            }
-
-            for (entry of grouparray){ //assign danger values for groups
-                if (entry[Object.keys(entry)[0]] / groupcount >= 0.2){
-                    entry["danger"] = "red"
-                } 
-                else if (entry[Object.keys(entry)[0]] / groupcount >= 0.1){
-                    entry["danger"] = "yellow"
-                }
-                else {
-                    entry["danger"] = "white"
-                }
-            }
-
-            for (entry of catarray){ //assign danger to be white for all categories
-                entry["danger"] = "white"
-            }
-            //sort lists alphabetically
+            //sort lists by first key alphabetically
             typearray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
             grouparray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
             catarray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
@@ -93,58 +153,76 @@
             typearray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
             grouparray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
             catarray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
-
-            document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorder list
-            document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorder list
-            document.getElementById('cat_list').appendChild(makeUL(catarray)) //call function to make unorder list
+            //sort lists alphabetically by class type
+            typearray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
+            grouparray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
+            //catarray.sort((a, b) => (Object.keys(a)[1] < Object.keys(b)[1]) ? 1 : -1)
+            document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorderd list
+            document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorderd list
+            document.getElementById('cat_list').appendChild(makeUL(catarray)) //call function to make unorderd list
 
             });
     });
 
-  /* Deprecated by including type list in database
-  function type_list(array){
-    var list = document.createElement('ul');
-    var typelist = {}
-
-    for (entry of array) {
-        if (entry.item_name in typelist){
-            typelist[entry.item_name] += 1
-        }
-
-        else {
-        typelist[entry.item_name] = 1
-        }
-    }
-    return typelist;
-    }
-    */
-
-    function makeUL(array) {
+    function makeUL(array) { //here we crate the lists that go into the columns (type, group, category) and colour them for easier reading
         var list = document.createElement('ul')
         list.className = 'list-group'
-        var max_ships = 0
         array.forEach(function(dict){
-            for (const [key, value] of Object.entries(dict)){
-                max_ships += value
-            }
-        })
-        array.forEach(function(dict){
-            var key = Object.keys(dict)[0]
-            var value = dict[Object.keys(dict)[0]]
-            var danger = dict[Object.keys(dict)[1]]
-            //var danger = dict[object.keys(dict)[1]]
+            var key = Object.keys(dict)[0] //extract the key of the first entry
+            var value = dict[Object.keys(dict)[0]] //extract the value of the first entry
+            var classtype = dict[Object.keys(dict)[1]] //extract the value of the second entry`
             var item = document.createElement('li') // create list element
-            if (danger == "red"){ //if the danger tag is red, assign class for 'list-group-item-danger' in addition to others
-                item.className = 'list-group-item list-group-item-danger d-flex justify-content-between align-items-center' //add classnames to list element (for css) and mark as danger (red)
+            item.className = 'list-group-item d-flex justify-content-between align-items-center' //add classnames to list element (for css)
+            var badgeitem = document.createElement('span') //create badge element
+            if (classtype == "A_dps"){ //check class type and assign background colours accordingly
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-danger' // add classnames (for css)
             }
-            else if (danger == "yellow"){ //if the danger tag is yellow, assign class for 'list-group-item-warning' in addition to others
-                item.className = 'list-group-item list-group-item-warning d-flex justify-content-between align-items-center' //add classnames to list element (for css) and mark as warning (orange)
+            else if (classtype == "C_support"){
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-warning' // add classnames (for css)
             }
-            else if (danger =="white"){
+            else if (classtype == "B_logi"){
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-success' // add classnames (for css)
+            }
+            else if (classtype == "D_cyno"){
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-info' // add classnames (for css)
+            }
+            /*
+            else if (classtype == "F_super"){
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-info' // add classnames (for css)
+            }
+            else if (classtype == "G_fax"){
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-success' // add classnames (for css)
+            }
+            else if (classtype == "H_cap"){
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-warning' // add classnames (for css)
+            }
+            else if (classtype =="I_none"){ 
+                badgeitem.className = 'badge badge-primary badge-pill float-right' // add classnames (for css)
+            }
+            */
+            else{ 
+                badgeitem.className = 'badge badge-primary badge-pill float-right' // add classnames (for css)
+            }
+            if (classtype == "E_titan"){
+                item.className = 'list-group-item border border-pink     rounded d-flex justify-content-between align-items-center' // add classnames (for css)
+            }
+            else if (classtype == "F_super"){
+                item.className = 'list-group-item border border-danger     rounded d-flex justify-content-between align-items-center' // add classnames (for css)
+            }
+            else if (classtype == "G_fax"){
+                item.className = 'list-group-item border border-success rounded d-flex justify-content-between align-items-center' // add classnames (for css)
+            }
+            else if (classtype == "H_cap"){
+                item.className = 'list-group-item border border-warning d-flex justify-content-between align-items-center' // add classnames (for css)
+            }
+            else{
                 item.className = 'list-group-item d-flex justify-content-between align-items-center' //add classnames to list element (for css)
             }
-            var badgeitem = document.createElement('span') //create badge element
-            badgeitem.className = 'badge badge-primary badge-pill float-right' // add classnames (for css)
+            /*
+            else if (classtype == "I_None"){
+                item.className = 'list-group-item d-flex justify-content-between align-items-center' //add classnames to list element (for css)
+            }
+            */
             badgeitem.appendChild(document.createTextNode(value)) //add text node to badge element
             item.appendChild(document.createTextNode(key)) //add text note to list element
             item.appendChild(badgeitem) //add the bage element to the list element

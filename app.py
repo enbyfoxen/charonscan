@@ -13,12 +13,19 @@ app = Flask(__name__)
 
 ### Here we load static files like lookup tables. ###
 ### They should not be modified, they are intended for global use by multiple functions ###
-with open('group_lookup.json') as f:
+with open('static/group_lookup.json') as f:
     group_lookup = json.load(f)
     f.close()
-with open('category_lookup.json') as f:
+with open('static/category_lookup.json') as f:
     cat_lookup = json.load(f)
     f.close()
+with open('static/ships.json', encoding='utf-8') as f:
+    ships = json.load(f)
+    f.close()
+with open('static/groups.json') as f:
+    groups = json.load(f)
+    f.close()
+
 # used to get scan data from API by UUID
 @app.route('/api/scan/<path:path>')
 def get_dscan(path): 
@@ -77,6 +84,14 @@ def serve_scan(path):
 def postpage():
     return app.send_static_file('postscan.html')
 
+### static json data ###
+@app.route('/data/ships.json')
+def get_dpsShips():
+    return jsonify(ships)
+
+@app.route('/data/groups.json')
+def get_groups():
+    return jsonify(groups)  
 def store_scan(parsed_scan):
     scan_id = uuid.uuid4() # generate a random UUID to use as scan ID
     creation_time = datetime.datetime.now() # store current time as creation time

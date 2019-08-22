@@ -1,0 +1,42 @@
+{
+    "dps" : [
+        "Battleship",
+        "Attack Battlecruiser",
+        "Combat Battlecruiser",
+        "Heavy Assault Cruiser",
+        "Assault Frigate"
+    ],
+
+    "support" : [
+        "Command Ship",
+        "Heavy Interdiction Cruiser",
+        "Interdictor",
+        "Command Destroyer"
+    ],
+
+    "cyno" : [
+        "Force Recon Ship",
+        "Black Ops"
+    ],
+
+    "logi" : [
+        "Logistics"
+    ],
+    
+    "supers" : [
+        "Supercarrier"
+    ],
+
+    "titans" : [
+        "Titan"
+    ],
+
+    "caps" : [
+        "Carrier",
+        "Dreadnought"
+    ],
+
+    "faxes" : [
+        "Force Auxiliary"
+    ]
+}
