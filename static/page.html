@@ -9,7 +9,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-<style>
+<style>     
     .border {
     border-width:4px !important;
     border-style: outset !important;
@@ -20,6 +20,7 @@
 </style>
 
 <div class="container-fluid">
+    <div id = "metadata" class= "text-center p-3 h3"></div>
     <div class = "row pt-4">
         <div class="pl-5 pr-4 col-md-4" id = "col1">
             <div id = "type_list"></div>
@@ -62,6 +63,7 @@
         $.getJSON("http://127.0.0.1:5000/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
             var typearray = []
             var typecount = 0
+            document.getElementById("metadata").innerHTML =  "System: " + response['system']
             for (const [key, value] of Object.entries(response['typelist'])){ //convert dict to array of objects
                 //passing the key name directly to an object doesnt work, this is a workaround for this
                 var obj = {}

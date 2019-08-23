@@ -8,7 +8,10 @@ import uuid
 import datetime
 from flask import jsonify
 import json
-
+import regex
+### REGEX PATTERNS ###
+system_extractor = regex.compile(r'^(.+) - ')
+#### REGEX PATTERNS END ###
 app = Flask(__name__)
 
 ### Here we load static files like lookup tables. ###
@@ -24,6 +27,9 @@ with open('static/ships.json', encoding='utf-8') as f:
     f.close()
 with open('static/groups.json') as f:
     groups = json.load(f)
+    f.close()
+with open ('static/solarsystemnames.json') as f:
+    systems = json.load(f)
     f.close()
 
 # used to get scan data from API by UUID
@@ -95,14 +101,15 @@ def get_groups():
 def store_scan(parsed_scan):
     scan_id = uuid.uuid4() # generate a random UUID to use as scan ID
     creation_time = datetime.datetime.now() # store current time as creation time
-    typelist = get_typelist(parsed_scan) # call typelist function 
-    grouplist = get_grouplist(typelist)
-    catlist = get_catlist(grouplist)
-    database.add_scan(scan_id, parsed_scan, creation_time, typelist, grouplist, catlist) # make database call to create entry, pass scan ID, scan data and creation time
+    typelist = make_typelist(parsed_scan) # call typelist function 
+    grouplist = make_grouplist(typelist)
+    catlist = make_catlist(grouplist)
+    system = find_system(parsed_scan)
+    database.add_scan(scan_id, parsed_scan, creation_time, typelist, grouplist, catlist, system) # make database call to create entry, pass scan ID, scan data and creation time
     datareturn = str(scan_id)
     return datareturn
 
-def get_typelist(scan): # create a dictionary of each item name and how often it occurs
+def make_typelist(scan): # create a dictionary of each item name and how often it occurs
     typelist = {}
     for entry in scan:
         if entry['item_name'] in typelist:
@@ -113,7 +120,7 @@ def get_typelist(scan): # create a dictionary of each item name and how often it
     
     return typelist
 
-def get_grouplist(typelist): # gets list of shiptypes and their numbers, uses lookup table to convert it to a list of shipgroups and their numbers
+def make_grouplist(typelist): # gets list of shiptypes and their numbers, uses lookup table to convert it to a list of shipgroups and their numbers
     global group_lookup
     grouplist = {}
     for key, value in typelist.items():
@@ -124,7 +131,7 @@ def get_grouplist(typelist): # gets list of shiptypes and their numbers, uses lo
             grouplist[group_lookup[key]] = value
     return grouplist
 
-def  get_catlist(grouplist):
+def make_catlist(grouplist):
     global cat_lookup
     catlist = {}
     for key, value in grouplist.items():
@@ -135,7 +142,33 @@ def  get_catlist(grouplist):
             catlist[cat_lookup[key]] = value
     return catlist
 
+def find_system(parsed_scan):
+    system_object_list = []
+    system_pattern_matches = []
+    system_name_matches = []
+    for entry in parsed_scan:
+        if cat_lookup[group_lookup[entry['item_name']]] == 'Structure':
+            system_object_list.append(entry['name_str'])
+    
+    for entry in system_object_list:
+        res = regex.search(system_extractor, entry)
+        system_pattern_matches.append(res.group(1))    
 
+    for entry in system_pattern_matches:
+        if entry in systems:
+            system_name_matches.append(entry)
+
+    top_count = 0
+    top_match = None
+    for entry in system_name_matches:
+        count = system_name_matches.count(entry)
+        if count > top_count:
+            top_match = entry
+            top_count = count
+
+    return top_match
+
+        
 
 if __name__ == "__main__":
     app.run(debug=True)     
