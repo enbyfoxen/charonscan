@@ -18,7 +18,7 @@ def __config(filename='database.ini', section='postgresql'):
     else:
         raise Exception('Section {0} not found in {1} file'.format(section, filename))
 
-    return db
+    return db   
 
 def __connect():
     conn = None
@@ -60,7 +60,7 @@ def get_scan(scan_id):
 def add_scan(scan_id, scan_data, creation_time, typelist, grouplist, catlist, system):
     json_data = json.dumps(scan_data) # dump scan data to json
     json_typelist = json.dumps(typelist)
-    json_grouplist = json.dumps(grouplist)  
+    json_grouplist = json.dumps(grouplist)
     json_catlist = json.dumps(catlist)
     cur = conn.cursor()
     # write data to database
