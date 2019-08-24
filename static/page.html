@@ -37,10 +37,11 @@
 </div>
 <script>
     var scandata
-    var url = document.URL //get document URL
+    var url = window.location.href
     var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
+    var hostname = window.location.hostname
     $(document).ready(function(){ //wait for page to load
-        $.getJSON("http://127.0.0.1:5000/data/ships.json", function(response){
+        $.getJSON("http://" + hostname + ":5000/data/ships.json", function(response){
             dpsShips = response['dpsShips']
             logiShips = response['logiShips']
             supportShips = response['supportShips']
@@ -50,7 +51,7 @@
             faxShips = response['faxes']
             titanShips = response['titans']
         })
-        $.getJSON("http://127.0.0.1:5000/data/groups.json", function(response){
+        $.getJSON("http://" + hostname + ":5000/data/groups.json", function(response){
             dps = response['dps']
             support = response['support']
             cyno = response['cyno']
@@ -60,7 +61,7 @@
             faxes = response['faxes']
             titans = response['titans']
         })
-        $.getJSON("http://127.0.0.1:5000/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
+        $.getJSON("http://" + hostname + ":5000/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
             var typearray = []
             var typecount = 0
             document.getElementById("metadata").innerHTML =  "System: " + response['system']
