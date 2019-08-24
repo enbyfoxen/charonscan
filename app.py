@@ -169,4 +169,4 @@ def find_system(parsed_scan):
     return top_match
 
 if __name__ == "__main__":
-    app.run(host = '0.0.0.0', port = '5000')
+    app.run()
