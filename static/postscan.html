@@ -3,11 +3,25 @@
 <body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<textarea id = "scaninput" rows = "10" cols ="100"></textarea>
-<button type="button" id="button1" onclick="postscan()">Post Scan</button>
-<p id = "errorbox"></p>
-
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css">
+<div class = "container mt-3">
+    <div class = "formgroup">
+        <label for = "scaninput" class = "text-center">Input D-Scan</label>
+        <div class = "m-2">
+            <textarea id = "scaninput" class = "form-control" rows = "10" cols ="100"></textarea>
+        </div>
+        <div class = "row">
+            <div class = "form-group col-md-6 float-left">
+                <button type="button" class = "btn btn-primary" id="button1" onclick="postscan()">Post Scan</button>
+            </div>
+            <p id = "errorbox" class = "col-md-6 float-right text-right" ></p>
+        </div>
+        
+    </div>
+</div>
 
 <script>
     function postscan(){

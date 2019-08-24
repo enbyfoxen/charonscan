@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <body>
-
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
+        
+    
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css">
 
 <style>     
     .border {
@@ -41,130 +41,140 @@
     var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
     var hostname = window.location.hostname
     $(document).ready(function(){ //wait for page to load
-        $.getJSON("http://" + hostname + ":5000/data/ships.json", function(response){
-            dpsShips = response['dpsShips']
-            logiShips = response['logiShips']
-            supportShips = response['supportShips']
-            cynoShips = response['cynoShips']
-            capShips = response['caps']
-            superShips = response['supers']
-            faxShips = response['faxes']
-            titanShips = response['titans']
-        })
-        $.getJSON("http://" + hostname + ":5000/data/groups.json", function(response){
-            dps = response['dps']
-            support = response['support']
-            cyno = response['cyno']
-            logi = response['logi']
-            caps = response['caps']
-            supers = response['supers']
-            faxes = response['faxes']
-            titans = response['titans']
-        })
-        $.getJSON("http://" + hostname + ":5000/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
-            var typearray = []
-            var typecount = 0
-            document.getElementById("metadata").innerHTML =  "System: " + response['system']
-            for (const [key, value] of Object.entries(response['typelist'])){ //convert dict to array of objects
-                //passing the key name directly to an object doesnt work, this is a workaround for this
-                var obj = {}
-                obj[key] = value
-                typecount += value
-                // assign class for later highlighting, the letter at the start is for sorting purposes.
-                if (dpsShips.includes(key) == true){
-                    obj["class"] = "A_dps"
+        // first we call getships(), when get ships is done it calls get groups(), when get groups is done it calls renderview(). This is done to ensure all static data is loaded before rendering the data
+        getships()
+        function getships() {
+            $.getJSON("http://" + hostname + ":5000/data/ships.json").then(function(response){
+                dpsShips = response['dpsShips']
+                logiShips = response['logiShips']
+                supportShips = response['supportShips']
+                cynoShips = response['cynoShips']
+                capShips = response['caps']
+                superShips = response['supers']
+                faxShips = response['faxes']
+                titanShips = response['titans']
+                getgroups()
+                })
+        }   
+        function getgroups() {
+            $.getJSON("http://" + hostname + ":5000/data/groups.json").then(function(response){
+                dps = response['dps']
+                support = response['support']
+                cyno = response['cyno']
+                logi = response['logi']
+                caps = response['caps']
+                supers = response['supers']
+                faxes = response['faxes']
+                titans = response['titans']
+                renderview()
+            })            
+        }
+        function renderview() { 
+            $.getJSON("http://" + hostname + ":5000/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
+                var typearray = []
+                var typecount = 0
+                document.getElementById("metadata").innerHTML =  "System: " + response['system']
+                for (const [key, value] of Object.entries(response['typelist'])){ //convert dict to array of objects
+                    //passing the key name directly to an object doesnt work, this is a workaround for this
+                    var obj = {}
+                    obj[key] = value
+                    typecount += value
+                    // assign class for later highlighting, the letter at the start is for sorting purposes.
+                    if (dpsShips.includes(key) == true){
+                        obj["class"] = "A_dps"
+                    }
+                    else if (logiShips.includes(key) == true){
+                        obj["class"] = "B_logi"
+                    }
+                    else if (supportShips.includes(key) == true){
+                        obj["class"] = "C_support"
+                    }
+                    else if (cynoShips.includes(key) == true){
+                        obj["class"] = "D_cyno"
+                    }
+                    else if (titanShips.includes(key) == true){
+                        obj["class"] = "E_titan"
+                    }
+                    else if (superShips.includes(key) == true){
+                        obj["class"] = "F_super"
+                    }
+                    else if (faxShips.includes(key) == true){
+                        obj["class"] = "G_fax"
+                    }
+                    else if (capShips.includes(key) == true){
+                        obj["class"] = "H_cap"
+                    }
+                    else{
+                        obj["class"] = "I_none"
+                    }
+                    typearray.push(obj)
                 }
-                else if (logiShips.includes(key) == true){
-                    obj["class"] = "B_logi"
+                var grouparray = []
+                var groupcount = 0
+                for (const [key, value] of Object.entries(response['grouplist'])){ //convert dict to array of objects
+                    var obj = {}
+                    obj[key] = value
+                    groupcount += value
+                    // assign class for later highlighting, the letter at the start is for sorting purposes.
+                    if (dps.includes(key) == true){
+                        obj["class"] = "A_dps"
+                    }
+                    else if (logi.includes(key) == true){
+                        obj["class"] = "B_logi"
+                    }
+                    else if (support.includes(key) == true){
+                        obj["class"] = "C_support"
+                    }
+                    else if (cyno.includes(key) == true){
+                        obj["class"] = "D_cyno"
+                    }
+                    else if (titans.includes(key) == true){
+                        obj["class"] = "E_titan"
+                    }
+                    else if (supers.includes(key) == true){
+                        obj["class"] = "F_super"
+                    }
+                    else if (faxes.includes(key) == true){
+                        obj["class"] = "G_fax"
+                    }
+                    else if (caps.includes(key) == true){
+                        obj["class"] = "H_cap"
+                    }
+                    else{
+                        obj["class"] = "I_none"
+                    }
+                    grouparray.push(obj)
+                    
                 }
-                else if (supportShips.includes(key) == true){
-                    obj["class"] = "C_support"
+                var catarray = []
+                var catcount = 0
+                for (const [key, value] of Object.entries(response['catlist'])){ //convert dict to array of objects
+                    var obj = {}
+                    obj[key] = value
+                    catcount += value
+                    obj["class"] = "E_none" //no highlighting for categories
+                    catarray.push(obj)
                 }
-                else if (cynoShips.includes(key) == true){
-                    obj["class"] = "D_cyno"
-                }
-                else if (titanShips.includes(key) == true){
-                    obj["class"] = "E_titan"
-                }
-                else if (superShips.includes(key) == true){
-                    obj["class"] = "F_super"
-                }
-                else if (faxShips.includes(key) == true){
-                    obj["class"] = "G_fax"
-                }
-                else if (capShips.includes(key) == true){
-                    obj["class"] = "H_cap"
-                }
-                else{
-                    obj["class"] = "I_none"
-                }
-                typearray.push(obj)
-            }
-            var grouparray = []
-            var groupcount = 0
-            for (const [key, value] of Object.entries(response['grouplist'])){ //convert dict to array of objects
-                var obj = {}
-                obj[key] = value
-                groupcount += value
-                // assign class for later highlighting, the letter at the start is for sorting purposes.
-                if (dps.includes(key) == true){
-                    obj["class"] = "A_dps"
-                }
-                else if (logi.includes(key) == true){
-                    obj["class"] = "B_logi"
-                }
-                else if (support.includes(key) == true){
-                    obj["class"] = "C_support"
-                }
-                else if (cyno.includes(key) == true){
-                    obj["class"] = "D_cyno"
-                }
-                else if (titans.includes(key) == true){
-                    obj["class"] = "E_titan"
-                }
-                else if (supers.includes(key) == true){
-                    obj["class"] = "F_super"
-                }
-                else if (faxes.includes(key) == true){
-                    obj["class"] = "G_fax"
-                }
-                else if (caps.includes(key) == true){
-                    obj["class"] = "H_cap"
-                }
-                else{
-                    obj["class"] = "I_none"
-                }
-                grouparray.push(obj)
-                
-            }
-            var catarray = []
-            var catcount = 0
-            for (const [key, value] of Object.entries(response['catlist'])){ //convert dict to array of objects
-                var obj = {}
-                obj[key] = value
-                catcount += value
-                obj["class"] = "E_none" //no highlighting for categories
-                catarray.push(obj)
-            }
- 
+    
 
-            //sort lists by first key alphabetically
-            typearray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
-            grouparray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
-            catarray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
-            //sort lists by entry amount
-            typearray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
-            grouparray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
-            catarray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
-            //sort lists alphabetically by class type
-            typearray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
-            grouparray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
-            //catarray.sort((a, b) => (Object.keys(a)[1] < Object.keys(b)[1]) ? 1 : -1)
-            document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorderd list
-            document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorderd list
-            document.getElementById('cat_list').appendChild(makeUL(catarray)) //call function to make unorderd list
+                //sort lists by first key alphabetically
+                typearray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
+                grouparray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
+                catarray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
+                //sort lists by entry amount
+                typearray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
+                grouparray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
+                catarray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
+                //sort lists alphabetically by class type
+                typearray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
+                grouparray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
+                //catarray.sort((a, b) => (Object.keys(a)[1] < Object.keys(b)[1]) ? 1 : -1)
+                document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorderd list
+                document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorderd list
+                document.getElementById('cat_list').appendChild(makeUL(catarray)) //call function to make unorderd list
 
-            });
+            })
+        };
     });
 
     function makeUL(array) { //here we crate the lists that go into the columns (type, group, category) and colour them for easier reading
