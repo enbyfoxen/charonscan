@@ -28,12 +28,13 @@
         var errflag = false
         var xhttp = new XMLHttpRequest();
         var url = window.location.hostname
-        xhttp.open("POST", "https://" + url + "/api/post", false)
+        var protocol = window.location.protocol
+        xhttp.open("POST", protocol + "//" + url + "/api/post", false)
         xhttp.setRequestHeader("Content-type", "text/plain")
         
         xhttp.send(document.getElementById("scaninput").value)
         if (xhttp.status == 200){
-            window.location.href = "https://"+ url + "/scan/" + xhttp.responseText
+            window.location.href = protocol + "//" +  url + "/scan/" + xhttp.responseText
         }
         else if (xhttp.status == 400){
             document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"

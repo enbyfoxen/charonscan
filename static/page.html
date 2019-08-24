@@ -40,11 +40,12 @@
     var url = window.location.href
     var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
     var hostname = window.location.hostname
+    var protocol = window.location.protocol
     $(document).ready(function(){ //wait for page to load
         // first we call getships(), when get ships is done it calls get groups(), when get groups is done it calls renderview(). This is done to ensure all static data is loaded before rendering the data
         getships()
         function getships() {
-            $.getJSON("https://" + hostname + "/data/ships.json").then(function(response){
+            $.getJSON(protocol + "//" + hostname + "/data/ships.json").then(function(response){
                 dpsShips = response['dpsShips']
                 logiShips = response['logiShips']
                 supportShips = response['supportShips']
@@ -57,7 +58,7 @@
                 })
         }   
         function getgroups() {
-            $.getJSON("https://" + hostname + "/data/groups.json").then(function(response){
+            $.getJSON(protocol + "//" + hostname + "/data/groups.json").then(function(response){
                 dps = response['dps']
                 support = response['support']
                 cyno = response['cyno']
@@ -70,7 +71,7 @@
             })            
         }
         function renderview() { 
-            $.getJSON("https://" + hostname + "/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
+            $.getJSON(protocol + "//" + hostname + "/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
                 var typearray = []
                 var typecount = 0
                 document.getElementById("metadata").innerHTML =  "System: " + response['system']

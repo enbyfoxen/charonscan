@@ -5,8 +5,8 @@ with open('static/typelist.json', encoding='utf-8') as f:
     typeset = set(json.load(f))
     f.close()
 ### REGEX PATTERNS ###
-dscan_splitter = regex.compile(r'\d+\t[^\t]+\t[^\t]+\t(?:[\d,]+ (?:km|m)|-)', flags = regex.MULTILINE | regex.VERSION1) # find every line that is a valid D-Scan line
-dscan_extractor = regex.compile(r'(\d+)\t([^\t]+)\t([^\t]+)\t((?:[\d,]+ (?:km|m))|-)', flags = regex.VERSION1) # extract all the values (item_id, name_string, item_name, range) from each D-Scan line
+dscan_splitter = regex.compile(r'\d+\t[^\t]+\t[^\t]+\t(?:(?:[\d,]|[\d.])+ (?:km|m)|-)', flags = regex.MULTILINE | regex.VERSION1) # find every line that is a valid D-Scan line
+dscan_extractor = regex.compile(r'(\d+)\t([^\t]+)\t([^\t]+)\t((?:(?:[\d,]|[\d.])+ (?:km|m))|-)', flags = regex.VERSION1) # extract all the values (item_id, name_string, item_name, range) from each D-Scan line
 range_extractor = regex.compile(r'(\d*)( km| m)') # split up the range value
 #### REGEX PATTERNS END ###
 
@@ -43,3 +43,9 @@ def parse_dscan(dscan):
 
             dscan_data.append(dscan_entry)
     return(dscan_data)
+
+if __name__ == "__main__":
+    import pyperclip
+    data = pyperclip.paste()
+    scan = parse_dscan(data)
+    print(scan)
