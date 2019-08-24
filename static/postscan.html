@@ -28,7 +28,7 @@
         var errflag = false
         var xhttp = new XMLHttpRequest();
         var url = window.location.hostname
-        xhttp.open("POST", "http://" + url + ":5000/api/post", false)
+        xhttp.open("POST", "http://" + url + "/api/post", false)
         xhttp.setRequestHeader("Content-type", "text/plain")
         
         xhttp.send(document.getElementById("scaninput").value)
