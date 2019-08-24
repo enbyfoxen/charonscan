@@ -44,7 +44,7 @@
         // first we call getships(), when get ships is done it calls get groups(), when get groups is done it calls renderview(). This is done to ensure all static data is loaded before rendering the data
         getships()
         function getships() {
-            $.getJSON("http://" + hostname + "/data/ships.json").then(function(response){
+            $.getJSON("https://" + hostname + "/data/ships.json").then(function(response){
                 dpsShips = response['dpsShips']
                 logiShips = response['logiShips']
                 supportShips = response['supportShips']
@@ -57,7 +57,7 @@
                 })
         }   
         function getgroups() {
-            $.getJSON("http://" + hostname + "/data/groups.json").then(function(response){
+            $.getJSON("https://" + hostname + "/data/groups.json").then(function(response){
                 dps = response['dps']
                 support = response['support']
                 cyno = response['cyno']
@@ -70,7 +70,7 @@
             })            
         }
         function renderview() { 
-            $.getJSON("http://" + hostname + "/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
+            $.getJSON("https://" + hostname + "/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
                 var typearray = []
                 var typecount = 0
                 document.getElementById("metadata").innerHTML =  "System: " + response['system']
