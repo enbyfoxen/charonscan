@@ -33,7 +33,7 @@
         
         xhttp.send(document.getElementById("scaninput").value)
         if (xhttp.status == 200){
-            window.location.href = "http://"+ url + ":5000/scan/" + xhttp.responseText
+            window.location.href = "http://"+ url + "/scan/" + xhttp.responseText
         }
         else if (xhttp.status == 400){
             document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"
