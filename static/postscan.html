@@ -13,12 +13,13 @@
     function postscan(){
         var errflag = false
         var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "http://127.0.0.1:5000/api/post", false)
+        var url = window.location.hostname
+        xhttp.open("POST", "http://" + url + ":5000/api/post", false)
         xhttp.setRequestHeader("Content-type", "text/plain")
         
         xhttp.send(document.getElementById("scaninput").value)
         if (xhttp.status == 200){
-            window.location.href = "http://127.0.0.1:5000/scan/" + xhttp.responseText
+            window.location.href = "http://"+ url + ":5000/scan/" + xhttp.responseText
         }
         else if (xhttp.status == 400){
             document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"
