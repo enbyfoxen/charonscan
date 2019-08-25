@@ -2,12 +2,13 @@
 <html>
 <body>
         
-    
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet" integrity="sha384-w+8Gqjk9Cuo6XH9HKHG5t5I1VR4YBNdPt/29vwgfZR485eoEJZ8rJRbm3TR32P6k" crossorigin="anonymous">
 
 <style>     
     .border {
@@ -17,20 +18,29 @@
     .border-pink{
         border-color: rgb(255,0,204) !important;
     }
+    .maxWidth {
+        max-width:1140px;
+    }
 </style>
 
-<div class="container-fluid">
-    <div id = "metadata" class= "text-center p-3 h3"></div>
+<div class="container-fluid maxWidth">
+    <div class = "row">
+        <div id = "system" class= "text-center p-3 h3 col-sm-5"></div>
+        <div id = "datetime" class= "text-center p-3 h3 col-sm-5"></div>
+        <div class = "d-flex col-sm-2 align-items-start flex-row-reverse">
+            <button type = "button" class = "btn btn-primary mt-2 btn-sm" onclick = "togglesort()">Toggle class sorting</button>
+        </div>
+    </div>
     <div class = "row pt-4">
-        <div class="pl-5 pr-4 col-md-4" id = "col1">
+        <div class="pl-5 pr-4 col-sm-4" id = "col1">
             <div id = "type_list"></div>
         </div>
         
-        <div class="pr-4 pl-4 col-md-4" id = "col2">
+        <div class="pr-4 pl-4 col-sm-4" id = "col2">
             <div id = "group_list"></div>
         </div>
 
-        <div class="pr-5 pl-4 col-md-4" id = "col3">
+        <div class="pr-5 pl-4 col-sm-4" id = "col3">
             <div id = "cat_list"></div>
         </div>
     </div>
@@ -41,6 +51,8 @@
     var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
     var hostname = window.location.hostname
     var protocol = window.location.protocol
+
+
     $(document).ready(function(){ //wait for page to load
         // first we call getships(), when get ships is done it calls get groups(), when get groups is done it calls renderview(). This is done to ensure all static data is loaded before rendering the data
         getships()
@@ -69,12 +81,59 @@
                 titans = response['titans']
                 renderview()
             })            
+        }       
+    })
+
+    function setCookie(cname, cvalue) {
+        document.cookie = cname + "=" + cvalue + ";path=/";
         }
-        function renderview() { 
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+        }
+
+    function togglesort(){
+        if (getCookie("disablesort") == "true") {
+            setCookie("disablesort", "false")
+            removechildren("type_list")
+            removechildren("group_list")
+            removechildren("cat_list")
+            renderview()
+        }
+        else if (getCookie("disablesort") == "false") {
+            setCookie("disablesort", "true")
+            removechildren("type_list")
+            removechildren("group_list")
+            removechildren("cat_list")
+            renderview()
+        }
+    }
+    
+    function removechildren(id) {
+        var list = document.getElementById(id)
+        while (list.hasChildNodes()) {   
+            list.removeChild(list.firstChild);
+        }
+    }
+
+    function renderview() { 
             $.getJSON(protocol + "//" + hostname + "/api/scan/" + urlsplit, function(response) { //get scan data using last part of current URL
                 var typearray = []
                 var typecount = 0
-                document.getElementById("metadata").innerHTML =  "System: " + response['system']
+                document.getElementById("datetime").innerHTML = response['datetime_created']
+                document.getElementById("system").innerHTML =  "System: " + response['system']
                 for (const [key, value] of Object.entries(response['typelist'])){ //convert dict to array of objects
                     //passing the key name directly to an object doesnt work, this is a workaround for this
                     var obj = {}
@@ -173,8 +232,17 @@
                 catarray = _.sortBy(catarray, function(o) {return o[Object.keys(o)[0]]})
                 catarray.reverse()
                 //sort lists alphabetically by class type
-                typearray = _.sortBy(typearray, function(o) {return o[Object.keys(o)[1]]})
-                grouparray = _.sortBy(grouparray, function(o) {return o[Object.keys(o)[1]]})
+                //class sorting is toggleable, so we check for the toggle here
+                //first we check if the cookie is set at all, if not we set it to false
+                var disablesort = getCookie("disablesort")
+                    if (disablesort == "") {
+                        setCookie("disablesort", "false")
+                    }
+                
+                if (getCookie("disablesort") != "true") {
+                    typearray = _.sortBy(typearray, function(o) {return o[Object.keys(o)[1]]})
+                    grouparray = _.sortBy(grouparray, function(o) {return o[Object.keys(o)[1]]})
+                }
 
                 document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorderd list
                 document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorderd list
@@ -182,7 +250,6 @@
 
             })
         };
-    });
 
     function makeUL(array) { //here we crate the lists that go into the columns (type, group, category) and colour them for easier reading
         var list = document.createElement('ul')
