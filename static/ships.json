@@ -123,7 +123,12 @@
         "Praxis",
         "Drekavac",
         "Nergal",
-        "Ikitursa"
+        "Ikitursa",
+        "Nemesis",
+        "Manticore",
+        "Hound",
+        "Purifier",
+        "Virtuoso"
         ],
 
     "logiShips": [
@@ -138,18 +143,10 @@
     ],
 
     "supportShips": [
-        "Onyx",
-        "Broadsword",
-        "Devoter",
-        "Phobos",
         "Eos",
         "Sleipnir",
         "Vulture",
         "Absolution",
-        "Heretic",
-        "Sabre",
-        "Eris",
-        "Flycatcher",
         "Astarte",
         "Claymore",
         "Nighthawk",
@@ -226,5 +223,16 @@
         "Venerable",
         "Dagon",
         "Loggerhead"
+    ],
+
+    "tackle" : [
+        "Onyx",
+        "Broadsword",
+        "Devoter",
+        "Phobos",
+        "Heretic",
+        "Sabre",
+        "Eris",
+        "Flycatcher"
     ]
 }

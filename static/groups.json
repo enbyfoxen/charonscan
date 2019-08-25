@@ -4,13 +4,12 @@
         "Attack Battlecruiser",
         "Combat Battlecruiser",
         "Heavy Assault Cruiser",
-        "Assault Frigate"
+        "Assault Frigate",
+        "Stealth Bomber"
     ],
 
     "support" : [
         "Command Ship",
-        "Heavy Interdiction Cruiser",
-        "Interdictor",
         "Command Destroyer"
     ],
 
@@ -38,5 +37,10 @@
 
     "faxes" : [
         "Force Auxiliary"
+    ],
+
+    "tackle" : [
+        "Heavy Interdiction Cruiser",
+        "Interdictor"
     ]
 }

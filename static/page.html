@@ -18,6 +18,9 @@
     .border-pink{
         border-color: rgb(255,0,204) !important;
     }
+    .bg-phorange{
+        background-color: rgb(255, 178, 61) !important;
+    }
     .maxWidth {
         max-width:1140px;
     }
@@ -66,6 +69,7 @@
                 superShips = response['supers']
                 faxShips = response['faxes']
                 titanShips = response['titans']
+                tackleShips = response['tackle']
                 getgroups()
                 })
         }   
@@ -79,6 +83,7 @@
                 supers = response['supers']
                 faxes = response['faxes']
                 titans = response['titans']
+                tackle = response['tackle']
                 renderview()
             })            
         }       
@@ -154,20 +159,23 @@
                     else if (cynoShips.includes(key) == true){
                         obj["class"] = "D_cyno"
                     }
+                    else if (tackleShips.includes(key) == true){
+                        obj["class"] = "E_tackle"
+                    }
                     else if (titanShips.includes(key) == true){
-                        obj["class"] = "E_titan"
+                        obj["class"] = "F_titan"
                     }
                     else if (superShips.includes(key) == true){
-                        obj["class"] = "F_super"
+                        obj["class"] = "G_super"
                     }
                     else if (faxShips.includes(key) == true){
-                        obj["class"] = "G_fax"
+                        obj["class"] = "H_fax"
                     }
                     else if (capShips.includes(key) == true){
-                        obj["class"] = "H_cap"
+                        obj["class"] = "I_cap"
                     }
                     else{
-                        obj["class"] = "I_none"
+                        obj["class"] = "J_none"
                     }
                     typearray.push(obj)
                 }
@@ -190,20 +198,23 @@
                     else if (cyno.includes(key) == true){
                         obj["class"] = "D_cyno"
                     }
+                    else if (tackle.includes(key) == true){
+                        obj["class"] = "E_tackle"
+                    }
                     else if (titans.includes(key) == true){
-                        obj["class"] = "E_titan"
+                        obj["class"] = "F_titan"
                     }
                     else if (supers.includes(key) == true){
-                        obj["class"] = "F_super"
+                        obj["class"] = "G_super"
                     }
                     else if (faxes.includes(key) == true){
-                        obj["class"] = "G_fax"
+                        obj["class"] = "H_fax"
                     }
                     else if (caps.includes(key) == true){
-                        obj["class"] = "H_cap"
+                        obj["class"] = "I_cap"
                     }
                     else{
-                        obj["class"] = "I_none"
+                        obj["class"] = "J_none"
                     }
                     grouparray.push(obj)
                     
@@ -277,17 +288,20 @@
             else if (classtype == "D_cyno"){
                 badgeitem.className = 'badge badge-primary badge-pill float-right bg-info'
             }
+            else if (classtype == "E_tackle"){
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-phorange'
+            }
             /*
-            else if (classtype == "F_super"){
+            else if (classtype == "G_super"){
                 badgeitem.className = 'badge badge-primary badge-pill float-right bg-info'
             }
-            else if (classtype == "G_fax"){
+            else if (classtype == "H_fax"){
                 badgeitem.className = 'badge badge-primary badge-pill float-right bg-success'
             }
-            else if (classtype == "H_cap"){
+            else if (classtype == "I_cap"){
                 badgeitem.className = 'badge badge-primary badge-pill float-right bg-warning'
             }
-            else if (classtype =="I_none"){ 
+            else if (classtype =="J_none"){ 
                 badgeitem.className = 'badge badge-primary badge-pill float-right'
             }
             */
@@ -295,16 +309,16 @@
                 badgeitem.className = 'badge badge-primary badge-pill float-right'
             }
             // here we add the classnames to the list items for CSS/bootstrap
-            if (classtype == "E_titan"){
+            if (classtype == "F_titan"){
                 item.className = 'list-group-item border border-pink rounded d-flex justify-content-between align-items-center'
             }
-            else if (classtype == "F_super"){
+            else if (classtype == "G_super"){
                 item.className = 'list-group-item border border-danger rounded d-flex justify-content-between align-items-center'
             }
-            else if (classtype == "G_fax"){
+            else if (classtype == "H_fax"){
                 item.className = 'list-group-item border border-success rounded d-flex justify-content-between align-items-center'
             }
-            else if (classtype == "H_cap"){
+            else if (classtype == "I_cap"){
                 item.className = 'list-group-item border border-warning d-flex justify-content-between align-items-center'
             }
             else{
