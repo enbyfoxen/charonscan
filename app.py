@@ -70,7 +70,8 @@ def api_post():
             abort(400)
 
         scan_id = store_scan(scan) # call function that stores the scan and returns the scan ID, send scan ID to client
-        return scan_id
+        json_scanid = {"scanid" : scan_id}
+        return jsonify(json_scanid)
     
     elif request.headers['Content-Type'] == 'text/plain': # check if the mimetype is text/plain and the charset utf-8
         data = request.get_data(as_text=True) # get the plaintext data as text
