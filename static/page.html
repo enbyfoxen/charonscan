@@ -84,11 +84,12 @@
         }       
     })
 
+    //takes cname and cvalue, creates cookie where the key is cname and the value is cvalue
     function setCookie(cname, cvalue) {
         document.cookie = cname + "=" + cvalue + ";path=/";
         }
-
-    function getCookie(cname) {
+    //searches for cookie with key name cname and returns it, returns "" if nothing is found
+    function getCookie(cname) { 
         var name = cname + "=";
         var decodedCookie = decodeURIComponent(document.cookie);
         var ca = decodedCookie.split(';');
@@ -103,7 +104,7 @@
         }
         return "";
         }
-
+    //checks what state the "togglesort" cookie is in and flips it
     function togglesort(){
         if (getCookie("disablesort") == "true") {
             setCookie("disablesort", "false")
@@ -121,6 +122,7 @@
         }
     }
     
+    //used to remove all children from a DOM element
     function removechildren(id) {
         var list = document.getElementById(id)
         while (list.hasChildNodes()) {   
@@ -243,10 +245,11 @@
                     typearray = _.sortBy(typearray, function(o) {return o[Object.keys(o)[1]]})
                     grouparray = _.sortBy(grouparray, function(o) {return o[Object.keys(o)[1]]})
                 }
-
-                document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorderd list
-                document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorderd list
-                document.getElementById('cat_list').appendChild(makeUL(catarray)) //call function to make unorderd list
+                
+                //call function to make unorderd lists and append them to their respective DOM nodes
+                document.getElementById('type_list').appendChild(makeUL(typearray)) 
+                document.getElementById('group_list').appendChild(makeUL(grouparray))
+                document.getElementById('cat_list').appendChild(makeUL(catarray))
 
             })
         };
@@ -261,53 +264,55 @@
             var item = document.createElement('li') // create list element
             item.className = 'list-group-item d-flex justify-content-between align-items-center' //add classnames to list element (for css)
             var badgeitem = document.createElement('span') //create badge element
+            //here we add all the classnames to the badges for CSS/bootstrap
             if (classtype == "A_dps"){ //check class type and assign background colours accordingly
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-danger' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-danger'
             }
             else if (classtype == "C_support"){
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-warning' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-warning'
             }
             else if (classtype == "B_logi"){
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-success' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-success'
             }
             else if (classtype == "D_cyno"){
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-info' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-info'
             }
             /*
             else if (classtype == "F_super"){
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-info' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-info'
             }
             else if (classtype == "G_fax"){
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-success' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-success'
             }
             else if (classtype == "H_cap"){
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-warning' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-warning'
             }
             else if (classtype =="I_none"){ 
-                badgeitem.className = 'badge badge-primary badge-pill float-right' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right'
             }
             */
             else{ 
-                badgeitem.className = 'badge badge-primary badge-pill float-right' // add classnames (for css)
+                badgeitem.className = 'badge badge-primary badge-pill float-right'
             }
+            // here we add the classnames to the list items for CSS/bootstrap
             if (classtype == "E_titan"){
-                item.className = 'list-group-item border border-pink     rounded d-flex justify-content-between align-items-center' // add classnames (for css)
+                item.className = 'list-group-item border border-pink rounded d-flex justify-content-between align-items-center'
             }
             else if (classtype == "F_super"){
-                item.className = 'list-group-item border border-danger     rounded d-flex justify-content-between align-items-center' // add classnames (for css)
+                item.className = 'list-group-item border border-danger rounded d-flex justify-content-between align-items-center'
             }
             else if (classtype == "G_fax"){
-                item.className = 'list-group-item border border-success rounded d-flex justify-content-between align-items-center' // add classnames (for css)
+                item.className = 'list-group-item border border-success rounded d-flex justify-content-between align-items-center'
             }
             else if (classtype == "H_cap"){
-                item.className = 'list-group-item border border-warning d-flex justify-content-between align-items-center' // add classnames (for css)
+                item.className = 'list-group-item border border-warning d-flex justify-content-between align-items-center'
             }
             else{
-                item.className = 'list-group-item d-flex justify-content-between align-items-center' //add classnames to list element (for css)
+                item.className = 'list-group-item d-flex justify-content-between align-items-center'
             }
             /*
             else if (classtype == "I_None"){
-                item.className = 'list-group-item d-flex justify-content-between align-items-center' //add classnames to list element (for css)
+                item.className = 'list-group-item d-flex justify-content-between align-items-center'
             }
             */
             badgeitem.appendChild(document.createTextNode(value)) //add text node to badge element
