@@ -6,7 +6,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css">
 
 <style>     
@@ -63,7 +63,7 @@
                 support = response['support']
                 cyno = response['cyno']
                 logi = response['logi']
-                caps = response['caps']
+                caps = response['caps'] 
                 supers = response['supers']
                 faxes = response['faxes']
                 titans = response['titans']
@@ -157,19 +157,25 @@
                     catarray.push(obj)
                 }
     
-
+                //Using lodash.sortBy() becasue array.sort() is unstable across JS engines
                 //sort lists by first key alphabetically
-                typearray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
-                grouparray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
-                catarray.sort((a, b) => (Object.keys(a)[0] < Object.keys(b)[0]) ? 1 : -1)
+                typearray = _.sortBy(typearray, function(o) {return Object.keys(o)[0]})
+                typearray.reverse()
+                grouparray = _.sortBy(grouparray, function(o) {return Object.keys(o)[0]})
+                grouparray.reverse()
+                catarray = _.sortBy(catarray, function(o) {return Object.keys(o)[0]})
+                catarray.reverse()
                 //sort lists by entry amount
-                typearray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
-                grouparray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
-                catarray.sort((a, b) => (a[Object.keys(a)[0]] < b[Object.keys(b)[0]]) ? 1 : -1)
+                typearray = _.sortBy(typearray, function(o) {return o[Object.keys(o)[0]]})
+                typearray.reverse()
+                grouparray = _.sortBy(grouparray, function(o) {return o[Object.keys(o)[0]]})
+                grouparray.reverse()
+                catarray = _.sortBy(catarray, function(o) {return o[Object.keys(o)[0]]})
+                catarray.reverse()
                 //sort lists alphabetically by class type
-                typearray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
-                grouparray.sort((a, b) => (a[Object.keys(a)[1]] > b[Object.keys(b)[1]]) ? 1 : -1)
-                //catarray.sort((a, b) => (Object.keys(a)[1] < Object.keys(b)[1]) ? 1 : -1)
+                typearray = _.sortBy(typearray, function(o) {return o[Object.keys(o)[1]]})
+                grouparray = _.sortBy(grouparray, function(o) {return o[Object.keys(o)[1]]})
+
                 document.getElementById('type_list').appendChild(makeUL(typearray)) //call function to make unorderd list
                 document.getElementById('group_list').appendChild(makeUL(grouparray)) //call function to make unorderd list
                 document.getElementById('cat_list').appendChild(makeUL(catarray)) //call function to make unorderd list
