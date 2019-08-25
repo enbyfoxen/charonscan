@@ -89,7 +89,7 @@ def api_post():
 def serve_scan(path):
     return app.send_static_file('page.html')
 
-@app.route('/post')
+@app.route('/')
 def postpage():
     return app.send_static_file('postscan.html')
 
