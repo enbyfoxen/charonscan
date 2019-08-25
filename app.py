@@ -53,6 +53,9 @@ def get_dscan(path):
 ### I REALLY NEED TO MAKE THIS CLEANER, BASICALLY HAVING THE SAME CODE FOR BOTH OPTIONS IS KINDA SHIT ###
 @app.route('/api/post', methods = ['POST'])
 def api_post():
+    # set maximum payload size to 3 megabytes. This is bigger than any d-scan will ever be and prevents someone from malicously filling up the DB
+    if request.content_length is not None and request.content_length > 3 * 1024 * 1024:
+        abort(413)
     if request.headers['Content-Type'] == 'application/json': # check if the mimetype is json
         data = request.get_json() # retrieve json data
         if data == None: # abort if the client sent empty data
@@ -130,7 +133,7 @@ def make_grouplist(typelist): # gets list of shiptypes and their numbers, uses l
         else:
             grouplist[group_lookup[key]] = value
     return grouplist
-
+# takes list of groups, uses lookup table to convert to list of categories
 def make_catlist(grouplist):
     global cat_lookup
     catlist = {}
@@ -142,22 +145,26 @@ def make_catlist(grouplist):
             catlist[cat_lookup[key]] = value
     return catlist
 
+# extracts system data from a parsed scan
 def find_system(parsed_scan):
     system_object_list = []
     system_pattern_matches = []
     system_name_matches = []
+    # get all the entries that are of the group "structure"
     for entry in parsed_scan:
         if cat_lookup[group_lookup[entry['item_name']]] == 'Structure':
             system_object_list.append(entry['name_str'])
     
+    # extract the system information from those entries using regex
     for entry in system_object_list:
         res = regex.search(system_extractor, entry)
         system_pattern_matches.append(res.group(1))    
 
+    # only keep the ones that are actual system names
     for entry in system_pattern_matches:
         if entry in systems:
             system_name_matches.append(entry)
-
+    # count them all, take the one with the highest count, and return it
     top_count = 0
     top_match = None
     for entry in system_name_matches:

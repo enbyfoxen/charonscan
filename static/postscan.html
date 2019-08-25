@@ -39,6 +39,9 @@
         else if (xhttp.status == 400){
             document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"
         }
+        else if (xhttp.status == 413){
+            document.getElementById("errorbox").innerHTML = "This scan is too large, what the hell are you doing?"
+        }
         else {
             document.getElementById("errorbox").innerHTML = "An error occured, please try again"
         }
