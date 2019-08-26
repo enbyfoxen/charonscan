@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import send_from_directory
 from validate_uuid import validate_uuid4
 import database
 from flask import abort
@@ -102,6 +103,16 @@ def get_dpsShips():
 @app.route('/data/groups.json')
 def get_groups():
     return jsonify(groups)  
+
+
+@app.route('/sharex')
+def sharex():
+    return app.send_static_file('charonscan_sharex_guide.html')
+
+@app.route('/data/charonscan.sxcu')
+def charonscan_config():
+    return send_from_directory(directory = "static/", filename = "charonscan.sxcu", as_attachment = True)
+
 def store_scan(parsed_scan):
     scan_id = uuid.uuid4() # generate a random UUID to use as scan ID
     creation_time = datetime.datetime.now() # store current time as creation time

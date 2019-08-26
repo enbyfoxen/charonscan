@@ -1,0 +1,10 @@
+﻿{
+  "Version": "12.4.1",
+  "Name": "Charonscan",
+  "DestinationType": "TextUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "https://scan.ripcharon.space/api/post",
+  "Body": "JSON",
+  "Data": "{\"string\" : \"$input$\"}",
+  "URL": "https://scan.ripcharon.space/scan/$json:scanid$"
+}
