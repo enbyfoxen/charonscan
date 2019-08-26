@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+
+<style>
+    .center {
+      margin: auto;
+      width: 960px;
+    }
+    </style>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>charonscan guide</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.css" integrity="sha256-jyWGtg7ocpUge8Zt/LotwFtPMWE23n7jgkHHw/Ejh+U=" crossorigin="anonymous" />
+</head>
+
+<body class="markdown-body">
+  <div class="center">
+    <h1 id="guide-to-setting-up-sharex-for-charonscan">Guide to setting up ShareX for charonscan</h1>
+    <ol>
+    <li>
+    <p>Download and install ShareX: <a href="https://getsharex.com/">https://getsharex.com/</a></p>
+    </li>
+    <li>
+    <p>Download the config file: <a href="https://scan.ripcharon.space/data/charonscan.sxcu">charonscan.sxcu</a></p>
+    </li>
+    <li>
+    <p>Open ShareX, select <code>Destinations</code> then <code>Custom uploader settings...</code><br>
+    <img src="https://i.imgur.com/GM3O3uJ.png" alt="Custom uploader settings"></p>
+    </li>
+    <li>
+    <p>Select <code>import</code> then <code>From file...</code><br>
+    <img src="https://i.imgur.com/pxQc6Ab.png" alt="import custom uploader"></p>
+    </li>
+    <li>
+    <p>Navigate to the <code>charonscan.sxcu</code> file that you downloaded earlier and open it.<br>
+    <img src="https://i.imgur.com/LOrsd96.png" alt="import custom uploader"></p>
+    </li>
+    <li>
+    <p>Ensure <code>Text Uploader</code> is set to <code>Charonscan</code><br>
+    <img src="https://i.imgur.com/ICNwicz.png" alt="set text uploader"></p>
+    </li>
+    <li>
+    <p>Close the <code>Custom uploader settings</code> and select <code>Hotkey settings...</code> in the main window.<br>
+    <img src="https://i.imgur.com/L2wzE2Q.png" alt="hotkey settings"></p>
+    </li>
+    <li>
+    <p>In the window that opens, select <code>Add...</code><br>
+    <img src="https://i.imgur.com/5V2Hs3x.png" alt="add shortcut"></p>
+    </li>
+    <li>
+    <p>In the window that opens, open the <code>Task</code> Drop down menu, select <code>Upload</code> then <code>Upload from clipboard</code><br>
+    <img src="https://i.imgur.com/zxvD9xV.png" alt="set task"></p>
+    </li>
+    <li>
+    <p>Enable the <code>Override destinations</code> checkbox, then open the <code>Destinations...</code> dropdown.<br>
+    Select <code>Text uploader</code> then select <code>Custom text uploader</code>.<br>
+    <img src="https://i.imgur.com/WmEkunM.png" alt="set destination"></p>
+    </li>
+    <li>
+    <p>Enable the <code>Override after upload settings</code> checkbox.<br>
+    Open the <code>After upload:</code> dropdown menu.<br>
+    Then enable <code>Copy URL to clipboard</code> and/or <code>Open URL</code> depending on your preferences.<br>
+    <img src="https://i.imgur.com/SJsNH8t.png" alt="after upload settings"></p>
+    </li>
+    <li>
+    <p>Close the <code>Task settings for Upload from clipboard window</code> to return to the <code>Hotkey settings</code> window.<br>
+    Click on the button next to the custom hotkey you created, and set a shortcut of your choosing.<br>
+    <img src="https://i.imgur.com/SkEcCye.png" alt="set shortcut"></p>
+    </li>
+    <li>
+    <p>Close the <code>Hotkey settings</code> window. Your shortcut is now configured.<br>
+    To upload a D-Scan to charonscan, copy it to your clipboard, then hit your shortcut.<br>
+    It will upload the D-Scan. After the second or two, depending on what you set earlier, a browser window with the D-Scan will open, the D-Scan link be copied to your clipboard, or both.<br>
+    ShareX will also give you a pop-up telling you <code>Task completed</code><br>
+    <img src="https://i.imgur.com/5BT5erp.png" alt="success"></p>
+    </li>
+    </ol>
+    <hr>
+    <p>Should your clipboard not contain a valid D-Scan, or a server issue occurs, ShareX will instead serve you an error pop-up.<br>
+    <img src="https://i.imgur.com/lougBvL.png" alt="enter image description here"></p>
+  </div>
+</body>
+
+</html>
