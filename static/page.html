@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>charonscan</title>
+</head>
 <body>
         
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script> 
@@ -17,6 +20,9 @@
     }
     .border-pink{
         border-color: rgb(255,0,204) !important;
+    }
+    .bg-pink{
+        background-color: rgb(255,0,204)
     }
     .bg-phorange{
         background-color: rgb(255, 178, 61) !important;
@@ -67,7 +73,6 @@
     var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
     var hostname = window.location.hostname
     var protocol = window.location.protocol
-
 
     $(document).ready(function(){ //wait for page to load
         // first we call getships(), when get ships is done it calls get groups(), when get groups is done it calls renderview(). This is done to ensure all static data is loaded before rendering the data
@@ -153,7 +158,11 @@
                 var typearray = []
                 var typecount = 0
                 document.getElementById("datetime").innerHTML = response['datetime_created']
-                document.getElementById("system").innerHTML =  "System: " + response['system']
+                var system = response['system']
+                if (system == null) {
+                    system = "Unkown"
+                }
+                document.getElementById("system").innerHTML =  "System: " + system
                 for (const [key, value] of Object.entries(response['typelist'])){ //convert dict to array of objects
                     //passing the key name directly to an object doesnt work, this is a workaround for this
                     var obj = {}
@@ -299,7 +308,7 @@
                 badgeitem.className = 'badge badge-primary badge-pill float-right bg-success'
             }
             else if (classtype == "D_cyno"){
-                badgeitem.className = 'badge badge-primary badge-pill float-right bg-info'
+                badgeitem.className = 'badge badge-primary badge-pill float-right bg-pink'
             }
             else if (classtype == "E_tackle"){
                 badgeitem.className = 'badge badge-primary badge-pill float-right bg-phorange'

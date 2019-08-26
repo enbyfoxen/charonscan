@@ -184,7 +184,7 @@ def find_system(parsed_scan):
         if count > top_count:
             top_match = entry
             top_count = count
-
+            
     return top_match
 
 if __name__ == "__main__":
