@@ -52,7 +52,7 @@
         if (xhttp.status == 200){
             window.location.href = protocol + "//" +  url + "/scan/" + xhttp.responseText
         }
-        else if (xhttp.status == 400){
+        else if (xhttp.status == 422){
             document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"
         }
         else if (xhttp.status == 413){

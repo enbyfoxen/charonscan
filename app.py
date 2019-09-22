@@ -60,15 +60,15 @@ def api_post():
     if request.headers['Content-Type'] == 'application/json': # check if the mimetype is json
         data = request.get_json() # retrieve json data
         if data == None: # abort if the client sent empty data
-            abort(400)
+            abort(422)
 
         elif 'string' not in data:  # abort if the client sent data in the wrong format
-            abort(400)
+            abort(422)
 
         else:
             scan = dscan_parser.parse_dscan(str(request.json['string'])) # parse scan data
         if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
-            abort(400)
+            abort(422)
 
         scan_id = store_scan(scan) # call function that stores the scan and returns the scan ID, send scan ID to client
         json_scanid = {"scanid" : scan_id}
@@ -78,7 +78,7 @@ def api_post():
         data = request.get_data(as_text=True) # get the plaintext data as text
         scan = dscan_parser.parse_dscan(data) # parse the scan data
         if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
-            abort(400)
+            abort(422)
 
         scan_id = store_scan(scan)  # call function that stores the scan and returns the scan ID, send scan ID to client
         return scan_id
