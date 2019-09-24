@@ -16,12 +16,13 @@ class EsiClient:
             print('Could not connect to esiclient on defined socket. Please check socket path, if esiclient is running, and possibly permissions.')
             exit(1)
 
-        
-
     def submit(self, local_json):
         r = self.session.post('http+unix://' + self.socket_path + '/local', json=local_json)
-        return r.json()
+        if r.headers.get('string-invalid') == 'false':
+            return r.json()
+        else:
+            return None
 
 if __name__ == "__main__":
-    client = EsiClient('/tmp/server.sock')
+    client = EsiClient('/tmp/esiclient.sock')
     print(client.submit((scan)))
