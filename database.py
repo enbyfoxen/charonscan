@@ -56,7 +56,8 @@ def get_scan(scan_id):
         }
         data = json.dumps(data)
         return data
-
+        
+### TODO: REFACTOR TO SUPPORT LOCAL SCANS ASWELL ###
 def add_scan(scan_id, scan_data, creation_time, typelist, grouplist, catlist, system):
     json_data = json.dumps(scan_data) # dump scan data to json
     json_typelist = json.dumps(typelist)
