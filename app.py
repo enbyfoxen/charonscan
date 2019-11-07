@@ -18,7 +18,7 @@ system_extractor = regex.compile(r'^(.+) - ')
 app = Flask(__name__)
 
 ### initialization stuff ###
-esiclient = esi_client_connector.EsiClient()
+esiclient = esi_client_connector.EsiClient('/tmp/esiclient.sock')
 
 ### Here we load static files like lookup tables. ###
 ### They should not be modified, they are intended for global use by multiple functions ###
@@ -74,7 +74,12 @@ def api_post():
             scan = dscan_parser.parse_dscan(str(request.json['string'])) # parse scan data
         if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
             #abort(422)
-            scan = esiclient.send(request.json)
+            scan = esiclient.submit(request.json)
+            if scan == None:
+                abort(422)
+            else:
+                scan_id = store_scan(localscan, scan) ### store_scan needs refactor to support this
+
         scan_id = store_scan(scan) # call function that stores the scan and returns the scan ID, send scan ID to client
         json_scanid = {"scanid" : scan_id}
         return jsonify(json_scanid)
