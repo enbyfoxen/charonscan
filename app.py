@@ -72,15 +72,18 @@ def api_post():
 
         else:
             scan = dscan_parser.parse_dscan(str(request.json['string'])) # parse scan data
+
         if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
             #abort(422)
             scan = esiclient.submit(request.json)
             if scan == None:
                 abort(422)
             else:
-                scan_id = store_scan(localscan, scan) ### store_scan needs refactor to support this
+                scan_id = store_scan('localscan', scan) ### store_scan needs refactor to support this
 
-        scan_id = store_scan(scan) # call function that stores the scan and returns the scan ID, send scan ID to client
+        else:
+            scan_id = store_scan('dscan', scan) # call function that stores the scan and returns the scan ID, send scan ID to client
+
         json_scanid = {"scanid" : scan_id}
         return jsonify(json_scanid)
     
@@ -90,7 +93,7 @@ def api_post():
         if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
             abort(422)
 
-        scan_id = store_scan(scan)  # call function that stores the scan and returns the scan ID, send scan ID to client
+        scan_id = store_scan('dscan', scan)  # call function that stores the scan and returns the scan ID, send scan ID to client
         return scan_id
     
     else: # if client sent neither json nor plain/text, abort with 415 (Unsupported Media Type)
@@ -123,15 +126,21 @@ def sharex():
 def charonscan_config():
     return send_from_directory(directory = "static/", filename = "charonscan.sxcu", as_attachment = True)
 
-def store_scan(parsed_scan):
+def store_scan(scantype, parsed_scan):
     scan_id = uuid.uuid4() # generate a random UUID to use as scan ID
     creation_time = datetime.datetime.now() # store current time as creation time
-    typelist = make_typelist(parsed_scan) # call typelist function 
-    grouplist = make_grouplist(typelist)
-    catlist = make_catlist(grouplist)
-    system = find_system(parsed_scan)
-    database.add_scan(scan_id, parsed_scan, creation_time, typelist, grouplist, catlist, system) # make database call to create entry, pass scan ID, scan data and creation time
     datareturn = str(scan_id)
+
+    if scantype == 'dscan':
+        typelist = make_typelist(parsed_scan) # call typelist function 
+        grouplist = make_grouplist(typelist)
+        catlist = make_catlist(grouplist)
+        system = find_system(parsed_scan)
+        database.add_scan(scan_id, parsed_scan, creation_time, typelist, grouplist, catlist, system) # make database call to create entry, pass scan ID, scan data and creation time
+
+    elif scantype == 'localscan':
+        database.add_local_scan(scan_id, parsed_scan, creation_time)
+
     return datareturn
 
 def make_typelist(scan): # create a dictionary of each item name and how often it occurs
