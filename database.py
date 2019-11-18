@@ -57,10 +57,28 @@ def get_scan(scan_id):
         data = json.dumps(data)
         return data
         
-def add_local_scan(scan_id, scan_data, creation_time)
+def get_local_scan(scan_id):
+    cur = conn.cursor()
+    cmd = 'SELECT * FROM localscan_data WHERE scan_id = %s'
+    cur.execute(cmd, (scan_id, ))
+    dat = cur.fetchone()
+    cur.close()
+    if dat == None:
+        return None
+    else:
+        data = {
+            "scan_UUID" : dat[0],
+            "scan_data" : dat[1],
+            "datetime_created" : dat[2].strftime("%Y-%m-%d %H:%M:%S")
+        }
+        data = json.dumps(data)
+        return data
+
+def add_local_scan(scan_id, scan_data, creation_time):
+    json_scan_data = json.dumps(scan_data)
     cur = conn.cursor()
     cmd = 'INSERT INTO localscan_data VALUES (%s, %s, %s)'
-    cur.execute(cmd, (str(scan_id), scan_data, creation_time))
+    cur.execute(cmd, (str(scan_id), json_scan_data, creation_time))
     conn.commit()
     cur.close()
 
