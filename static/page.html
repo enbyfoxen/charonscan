@@ -72,6 +72,10 @@
     var url = window.location.href
     var urlsplit = url.split("/").slice(-1)[0]; //get last part of document URL
     var hostname = window.location.hostname
+    port = window.location.port
+    if(port != undefined){
+        hostname = hostname + ":" + port
+    }
     var protocol = window.location.protocol
 
     $(document).ready(function(){ //wait for page to load
