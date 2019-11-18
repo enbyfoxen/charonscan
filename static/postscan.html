@@ -44,13 +44,19 @@
         var errflag = false
         var xhttp = new XMLHttpRequest();
         var url = window.location.hostname
+        var port = window.location.port
+        if(port != undefined){
+            url = url + ":" + port
+        }
         var protocol = window.location.protocol
         xhttp.open("POST", protocol + "//" + url + "/api/post", false)
-        xhttp.setRequestHeader("Content-type", "text/plain")
+        xhttp.setRequestHeader("Content-type", "application/json")
         
-        xhttp.send(document.getElementById("scaninput").value)
+        //xhttp.send(document.getElementById("scaninput").value)
+        xhttp.send(JSON.stringify({"string" : document.getElementById("scaninput").value}))
         if (xhttp.status == 200){
-            window.location.href = protocol + "//" +  url + "/scan/" + xhttp.responseText
+            jsonresp = JSON.parse(xhttp.response)
+            window.location.href = protocol + "//" +  url + "/scan/" + jsonresp['scanid']
         }
         else if (xhttp.status == 422){
             document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"
