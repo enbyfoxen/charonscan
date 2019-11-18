@@ -54,7 +54,20 @@ def get_dscan(path):
             )
             return response
 
-# used to add scans to database
+@app.route('/api/localscan/<path:path>')
+def get_local_scan(path):
+    if validate_uuid4(path) == False:
+        return abort(400)
+    else:
+        res = database.get_local_scan(path)
+        if res == None:
+            return abort(404)
+        else:
+            response = app.response_class(  
+                response=res,
+                mimetype='application/json'
+            )
+            return response
 
 ### I REALLY NEED TO MAKE THIS CLEANER, BASICALLY HAVING THE SAME CODE FOR BOTH OPTIONS IS KINDA SHIT ###
 @app.route('/api/post', methods = ['POST'])
@@ -82,8 +95,7 @@ def api_post():
                 scan_id = store_scan('localscan', scan) ### store_scan needs refactor to support this
 
         else:
-            scan_id = store_scan('dscan', scan) # call function that stores the scan and returns the scan ID, send scan ID to client
-
+            scan_id = store_scan('dscan', scan) # call function that stores the scan and returns the scan ID, send scan ID uuuuu
         json_scanid = {"scanid" : scan_id}
         return jsonify(json_scanid)
     
@@ -207,4 +219,4 @@ def find_system(parsed_scan):
     return top_match
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0",port=80)
