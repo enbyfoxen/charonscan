@@ -116,6 +116,10 @@ def api_post():
 def serve_scan(path):
     return app.send_static_file('page.html')
 
+@app.route('/localscan/<path:path>')
+def server_scan(path):
+    return app.send_static_file('localscan.html')
+
 @app.route('/')
 def postpage():
     return app.send_static_file('postscan.html')
