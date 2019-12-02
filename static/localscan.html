@@ -132,6 +132,33 @@
         })
         return ul
     }
+
+    function make_corp_ul(corp_data_list) {
+        var ul = document.createElement('ul')
+        ul.className = 'list-group'
+        corp_data_list.forEach(function(dict){
+            if(dict['alliance_id'] != undefined){
+                var alliance_id = dict['alliance_id']
+            }
+            else{
+                var alliance_id = null
+            }
+            var corpname = dict['name']
+            var ticker = dict['ticker']
+            var list_item = document.createElement('li')
+            list_item.className = "py-1 list-group-item d-flex justify-content-between align-items-center"
+            var corp_image = document.createElement("IMG")
+            corp_image.setAttribute("src", "https://images.evetech.net/corporations/" + corporation_id + "/logo?size=32")
+            corp_image.className = "rounded float-left mr-3"
+            var corp_name_div = document.createElement("DIV")
+            corp_name_div.className = "float-left flex-grow-1"
+            var corp_name_text = document.createTextNode(corpname)
+            var h4 = document.createElement("H4")
+            h4.className = "my-auto d-flex align-items-center"
+            var span = document.createElement("SPAN")
+            span.className = "badge badge-primary"
+        })
+    }
 </script>
 </body>
 </html>
