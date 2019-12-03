@@ -66,19 +66,21 @@
         
         <div class="pr-4 pl-4 col-sm-4" id = "col2">
             <div id = "corporation_list">
-                <ul>
+                <ul> <!--
                     <li class="py-1 list-group-item d-flex justify-content-between align-items-center"> <img src="https://imageserver.eveonline.com/Corporation/98477766_32.png" class="rounded float-left mr-3"> <div class="float-left flex-grow-1">Horde Vanguard</div> <h4 class="my-auto d-flex align-items-center"> <span class="badge badge-primary">50 </span></h4> </li>
                     <li class="py-1 list-group-item d-flex justify-content-between align-items-center"> <img src="https://imageserver.eveonline.com/Corporation/98599557_32.png" class="rounded float-left mr-3"> <div class="float-left flex-grow-1">Horde Armada</div> <h4 class="my-auto d-flex align-items-center"> <span class="badge badge-primary">20 </span></h4> </li>
                     <li class="py-1 list-group-item d-flex justify-content-between align-items-center"> <img src= "https://imageserver.eveonline.com/Corporation/98374434_32.png"class="rounded float-left mr-3"> <div class="float-left flex-grow-1">half empty</div> <h4 class="my-auto d-flex align-items-center"> <span class="badge badge-primary">90 </span></h4> </li>
+                    -->
                 </ul>
             </div>
         </div>
 
         <div class="pr-5 pl-4 col-sm-4" id = "col3">
             <div id = "alliance_list">
-                <ul>
+                <ul> <!--
                     <li class="py-1 list-group-item d-flex justify-content-between align-items-center"> <img src="https://imageserver.eveonline.com/Alliance/99005338_32.png" class="rounded float-left mr-3"> <div class="float-left flex-grow-1">Pandemic Horde</div> <h4 class="my-auto d-flex align-items-center"> <span class="badge badge-primary">90 </span></h4> </li>
                     <li class="py-1 list-group-item d-flex justify-content-between align-items-center"> <img src="https://imageserver.eveonline.com/Alliance/99007379_32.png" class="rounded float-left mr-3"> <div class="float-left flex-grow-1">skill urself</div> <h4 class="my-auto d-flex align-items-center"> <span class="badge badge-primary">90 </span></h4> </li>
+                    -->
                 </ul>
             </div>
         </div>
@@ -103,6 +105,10 @@
                 scan = response
                 var char_ul = make_char_ul(scan['scan_data']['char_data_list']);
                 document.getElementById('character_list').appendChild(char_ul)
+                var corp_ul = make_corp_ul(scan['scan_data']['corp_data_list'])
+                document.getElementById('corporation_list').appendChild(corp_ul)
+                var alliance_ul = make_alliance_ul(scan['scan_data']['alliance_data_list'])
+                document.getElementById('alliance_list').appendChild(alliance_ul)
             })
 
         })
@@ -136,7 +142,7 @@
     function make_corp_ul(corp_data_list) {
         var ul = document.createElement('ul')
         ul.className = 'list-group'
-        corp_data_list.forEach(function(dict){
+        Object.values(corp_data_list).forEach(dict => {
             if(dict['alliance_id'] != undefined){
                 var alliance_id = dict['alliance_id']
             }
@@ -145,6 +151,7 @@
             }
             var corpname = dict['name']
             var ticker = dict['ticker']
+            var corporation_id = dict['corp_id']
             var list_item = document.createElement('li')
             list_item.className = "py-1 list-group-item d-flex justify-content-between align-items-center"
             var corp_image = document.createElement("IMG")
@@ -157,7 +164,54 @@
             h4.className = "my-auto d-flex align-items-center"
             var span = document.createElement("SPAN")
             span.className = "badge badge-primary"
+            var badge_text = document.createTextNode(dict['character_count'])
+            span.appendChild(badge_text)
+            h4.appendChild(span)
+            corp_name_div.appendChild(corp_name_text)
+            list_item.appendChild(corp_image)
+            list_item.appendChild(corp_name_div)
+            list_item.appendChild(h4)
+            list_item.dataset.alliance_id = dict['alliance_id']
+            list_item.dataset.corporation_id = corporation_id
+            ul.appendChild(list_item)
+
         })
+
+        return ul
+    }
+
+    function make_alliance_ul(alliance_data_list) {
+        var ul = document.createElement('ul')
+        ul.className = 'list-group'
+        Object.values(alliance_data_list).forEach(dict => {
+            var alliance_name = dict['name']
+            var alliance_id = dict['alliance_id']
+            var alliance_ticker = dict['ticker']
+            var list_item = document.createElement('li')
+            list_item.className = "py-1 list-group-item d-flex justify-content-between align-items-center"
+            var alliance_image = document.createElement("IMG")
+            alliance_image.setAttribute("src", "https://images.evetech.net/alliances/" + alliance_id + "/logo?size=32")
+            alliance_image.className =  "rounded float-left mr-3"     
+            var alliance_name_div = document.createElement("DIV")
+            alliance_name_div.className = "float-left flex-grow-1"
+            var alliance_name_text = document.createTextNode(alliance_name)
+            var h4 = document.createElement("H4")
+            h4.className = "my-auto d-flex align-items-center"
+            var span = document.createElement("SPAN")
+            span.className = "badge badge-primary"
+            var badge_text = document.createTextNode(dict['character_count'])
+            span.appendChild(badge_text)
+            h4.appendChild(span)
+            alliance_name_div.appendChild(alliance_name_text)
+            list_item.appendChild(alliance_image)
+            list_item.appendChild(alliance_name_div)
+            list_item.appendChild(h4)
+            list_item.dataset.alliance_id = alliance_id
+            ul.appendChild(list_item)
+
+        })
+
+        return ul
     }
 </script>
 </body>
