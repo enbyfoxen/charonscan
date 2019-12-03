@@ -103,11 +103,13 @@
             scan_promise.done(function(response){
                 console.log(response)
                 scan = response
+                var corp_data_list = _.orderBy(scan['scan_data']['corp_data_list'], function(o) {return o['character_count']}, ['desc', 'asc'])
+                var alliance_data_list = _.orderBy(scan['scan_data']['alliance_data_list'], function(o) {return o['character_count']}, ['desc', 'asc'])
                 var char_ul = make_char_ul(scan['scan_data']['char_data_list']);
                 document.getElementById('character_list').appendChild(char_ul)
-                var corp_ul = make_corp_ul(scan['scan_data']['corp_data_list'])
+                var corp_ul = make_corp_ul(corp_data_list)
                 document.getElementById('corporation_list').appendChild(corp_ul)
-                var alliance_ul = make_alliance_ul(scan['scan_data']['alliance_data_list'])
+                var alliance_ul = make_alliance_ul(alliance_data_list)
                 document.getElementById('alliance_list').appendChild(alliance_ul)
             })
 
