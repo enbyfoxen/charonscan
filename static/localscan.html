@@ -126,7 +126,7 @@
             var list_item = document.createElement('li')
             list_item.className = "py-1 px-3 list-group-item d-flex justify-content-around align-items-center" 
             var char_image = document.createElement("IMG")
-            char_image.setAttribute("src", "https://images.evetech.net/characters/" + character_id + "/portrait?size=32")
+            char_image.setAttribute("src", "https://images.evetech.net/characters/" + character_id + "/portrait?size=32", loading = "lazy")
             char_image.className = "rounded float-left mr-3"
             var char_name_div = document.createElement("DIV")
             char_name_div.className = "flex-grow-1"
@@ -157,7 +157,7 @@
             var list_item = document.createElement('li')
             list_item.className = "py-1 list-group-item d-flex justify-content-between align-items-center"
             var corp_image = document.createElement("IMG")
-            corp_image.setAttribute("src", "https://images.evetech.net/corporations/" + corporation_id + "/logo?size=32")
+            corp_image.setAttribute("src", "https://images.evetech.net/corporations/" + corporation_id + "/logo?size=32", loading = "lazy")
             corp_image.className = "rounded float-left mr-3"
             var corp_name_div = document.createElement("DIV")
             corp_name_div.className = "float-left flex-grow-1"
@@ -192,7 +192,7 @@
             var list_item = document.createElement('li')
             list_item.className = "py-1 list-group-item d-flex justify-content-between align-items-center"
             var alliance_image = document.createElement("IMG")
-            alliance_image.setAttribute("src", "https://images.evetech.net/alliances/" + alliance_id + "/logo?size=32")
+            alliance_image.setAttribute("src", "https://images.evetech.net/alliances/" + alliance_id + "/logo?size=32", loading = "lazy")
             alliance_image.className =  "rounded float-left mr-3"     
             var alliance_name_div = document.createElement("DIV")
             alliance_name_div.className = "float-left flex-grow-1"
