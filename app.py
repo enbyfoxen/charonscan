@@ -92,22 +92,25 @@ def api_post():
             if scan == None:
                 abort(422)
             else:
-                scan_id = store_scan('localscan', scan) ### store_scan needs refactor to support this
+                scan_id = store_scan('localscan', scan) # store scan as local scan
+                scan_type = 'l' # set scan type to 'l' for local scan
 
         else:
-            scan_id = store_scan('dscan', scan) # call function that stores the scan and returns the scan ID, send scan ID uuuuu
-        json_scanid = {"scanid" : scan_id}
+            scan_id = store_scan('dscan', scan) # call function that stores the scan and returns the scan ID, send scan ID and scan type
+            scan_type = 'd' # set scan type to 'd' for dscan
+
+        json_scanid = {"scanid" : scan_id, "type" : scan_type}
         return jsonify(json_scanid)
     
     else: # if client sent neither json nor plain/text, abort with 415 (Unsupported Media Type)
         print(request.headers['Content-Type'])
         abort(415)
 
-@app.route('/scan/<path:path>')
+@app.route('/scan/d/<path:path>')
 def serve_scan(path):
     return app.send_static_file('page.html')
 
-@app.route('/localscan/<path:path>')
+@app.route('/scan/l/<path:path>')
 def server_scan(path):
     return app.send_static_file('localscan.html')
 
