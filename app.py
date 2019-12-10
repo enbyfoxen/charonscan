@@ -99,15 +99,6 @@ def api_post():
         json_scanid = {"scanid" : scan_id}
         return jsonify(json_scanid)
     
-    elif request.headers['Content-Type'] == 'text/plain': # check if the mimetype is text/plain and the charset utf-8
-        data = request.get_data(as_text=True) # get the plaintext data as text
-        scan = dscan_parser.parse_dscan(data) # parse the scan data
-        if scan.__len__() < 1: # abort if the parser comes back empty (we dont want empty scans in the database)
-            abort(422)
-
-        scan_id = store_scan('dscan', scan)  # call function that stores the scan and returns the scan ID, send scan ID to client
-        return scan_id
-    
     else: # if client sent neither json nor plain/text, abort with 415 (Unsupported Media Type)
         print(request.headers['Content-Type'])
         abort(415)
