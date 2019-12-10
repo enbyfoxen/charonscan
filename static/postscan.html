@@ -56,7 +56,7 @@
         xhttp.send(JSON.stringify({"string" : document.getElementById("scaninput").value}))
         if (xhttp.status == 200){
             jsonresp = JSON.parse(xhttp.response)
-            window.location.href = protocol + "//" +  url + "/scan/" + jsonresp['scanid']
+            window.location.href = protocol + "//" +  url + "/scan/" + jsonresp['type'] + "/" + jsonresp['scanid']
         }
         else if (xhttp.status == 422){
             document.getElementById("errorbox").innerHTML = "This is not a valid D-Scan"
