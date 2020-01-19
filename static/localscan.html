@@ -34,8 +34,7 @@
 
 <div class="container-fluid maxWidth">
     <div class = "row mx-5">
-        <div id = "system" class= "text-center p-2 h3 col-sm-6"></div>
-        <div id = "datetime" class= "text-center p-2 h3 col-sm-6"></div>
+        <div id = "datetime" class= "text-center p-2 h3 col-sm-12"></div>
     </div>
     <hr>
     <div class = "row pt-1">
@@ -82,7 +81,6 @@
    $(document).ready(function(){
             var scan_promise = $.getJSON(protocol + "//" + hostname + "/api/localscan/" + urlsplit)
             scan_promise.done(function(response){
-                console.log(response)
                 scan = response
                 var corp_data_list = _.orderBy(scan['scan_data']['corp_data_list'], function(o) {return o['character_count']}, ['desc', 'asc'])
                 var alliance_data_list = _.orderBy(scan['scan_data']['alliance_data_list'], function(o) {return o['character_count']}, ['desc', 'asc'])
@@ -92,6 +90,7 @@
                 document.getElementById('corporation_list').appendChild(corp_ul)
                 var alliance_ul = make_alliance_ul(alliance_data_list)
                 document.getElementById('alliance_list').appendChild(alliance_ul)
+                document.getElementById("datetime").innerHTML = scan['datetime_created']
             })
 
         })
