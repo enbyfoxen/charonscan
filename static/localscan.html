@@ -90,7 +90,7 @@
                 document.getElementById('corporation_list').appendChild(corp_ul)
                 var alliance_ul = make_alliance_ul(alliance_data_list)
                 document.getElementById('alliance_list').appendChild(alliance_ul)
-                document.getElementById("datetime").innerHTML = scan['datetime_created']
+                document.getElementById("datetime").innerHTML = "Created: " + scan['datetime_created']
             })
 
         })
